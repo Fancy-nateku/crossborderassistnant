@@ -49,7 +49,7 @@ export default async function ValuePage({ params, searchParams }: Props) {
       progress={ROUTE_PROGRESS.step3}
       footer={<Button type="submit" form={VALUE_FORM_ID}>{t("value.next")}</Button>}
     >
-      <h1 className="m-0 text-[28px] leading-[1.15] font-bold">{t("value.title")}</h1>
+      <h1 className="m-0 text-[28px] leading-[1.15] font-bold md:text-[34px]">{t("value.title")}</h1>
       <ValueForm input={input} rates={rates} />
       {threshold !== null ? (
         <p className="m-0 rounded-control bg-muted px-4 py-3.5 text-[15px] leading-[1.5]">

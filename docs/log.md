@@ -17,3 +17,14 @@ Decisions and differences from the docs. Each needs a team nod:
 - **Illustrative exchange rates** (KES 130, UGX 3700 per USD) exist only so the prototype can reach a verdict. They are flagged `illustrative` in the data and the value screen says so. They are not admin-set rates.
 - **Dates:** fixture sources have no `lastVerifiedAt`, so the UI shows "[date not recorded]" rather than inventing one.
 - **Fixture rules for `above_threshold` and `not_on_common_list`** have empty requirement lists, because the canvas defines no items for them. Those results show the verdict, a "no verified checklist" note and the Trade Information Desk panel.
+
+## 2026-10-17 Responsive layouts for tablet and desktop
+
+`docs/DESIGN.md` keeps the trader flow in a 480 px column on wide screens. We now use the room instead. Needs a team nod, and `DESIGN.md` should be updated to match.
+
+- **Shared container** (`src/components/ui/container.tsx`). Header and footer bars span the full width; content sits in a `narrow` (480 px, 640 px from 768 px) or `wide` (1120 px) container. Side padding grows from 20 px to 32 px.
+- **Landing:** from 1024 px the headline and button sit left and the route strip right. Steps become three columns from 768 px.
+- **Wizard steps:** a 640 px form column from tablet up. Border and product options go two across. The primary button sits bottom right at a fixed width instead of full width.
+- **Result:** one column up to 1023 px. From 1024 px the checklist fills the right column and the verdict, actions and help panel stack on the left.
+- **Saved plans:** one, two, then three cards across.
+- Phone layout at 360 to 390 px is unchanged. Tap targets (44 px) and text sizes (16 px body) are the same at every width.

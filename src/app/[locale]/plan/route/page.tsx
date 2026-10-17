@@ -39,7 +39,7 @@ export default async function RoutePage({ params, searchParams }: Props) {
       progress={ROUTE_PROGRESS.step1}
       footer={<Button type="submit" form="route-form">{t("route.next")}</Button>}
     >
-      <h1 className="m-0 text-[28px] leading-[1.15] font-bold">{t("route.title")}</h1>
+      <h1 className="m-0 text-[28px] leading-[1.15] font-bold md:text-[34px]">{t("route.title")}</h1>
 
       <form
         id="route-form"
@@ -62,8 +62,8 @@ export default async function RoutePage({ params, searchParams }: Props) {
           </Field>
         </div>
 
-        <fieldset className="m-0 flex flex-col gap-2.5 border-0 p-0">
-          <legend className="mb-2.5 p-0 text-[15px] font-bold">{t("route.crossing")}</legend>
+        <fieldset className="m-0 grid gap-2.5 border-0 p-0 md:grid-cols-2">
+          <legend className="mb-2.5 p-0 text-[15px] font-bold md:col-span-2">{t("route.crossing")}</legend>
           {borders.map((border) => (
             <OptionRow
               key={border.id}
@@ -77,7 +77,7 @@ export default async function RoutePage({ params, searchParams }: Props) {
               ) : null}
             </OptionRow>
           ))}
-          <div className="flex flex-col gap-0.5 rounded-control border-[1.5px] border-dashed border-line-strong px-4 py-3 text-ink-muted">
+          <div className="flex flex-col gap-0.5 rounded-control border-[1.5px] border-dashed md:col-span-2 border-line-strong px-4 py-3 text-ink-muted">
             <span className="text-base font-bold">{t("route.otherTitle")}</span>
             <span className="text-sm">{t("route.otherBody")}</span>
           </div>

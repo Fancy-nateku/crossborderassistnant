@@ -29,70 +29,71 @@
     "stepOf": "Step {step} of 3"
   },
   "landing": {
-    "title": "Know what you need before you reach the border.",
-    "body": "Tell us your route, your goods and their value. You get a checklist of documents and official fees, with the source for each one.",
-    "cta": "Build your trade plan",
-    "noAccount": "No account needed to see your checklist.",
-    "stepsTitle": "Three questions, one checklist",
+    "title": "Know what you need before the border.",
+    "body": "Answer three quick questions. Get a checklist of documents and fees, each with its source.",
+    "cta": "Start a plan",
+    "noAccount": "No account needed.",
+    "stepsTitle": "How it works",
     "steps": {
       "route": {
-        "title": "Your route",
-        "body": "Where you start, where you are going and which crossing you use."
+        "title": "Route",
+        "body": "Pick your border crossing."
       },
       "goods": {
-        "title": "Your goods",
-        "body": "Search by the name you use at the market."
+        "title": "Goods",
+        "body": "Search by the name you use."
       },
       "value": {
-        "title": "Their value",
-        "body": "In shillings. We convert it for the rules that use dollars."
+        "title": "Value",
+        "body": "Enter the amount in shillings."
       }
     },
-    "trustTitle": "Every item shows where it comes from",
-    "trustNote": "When we are not sure, we say so and tell you who to ask.",
-    "openSaved": "Open saved plans"
+    "trustTitle": "Every item shows its source",
+    "trustNote": "Not sure? We say so and tell you who to ask.",
+    "openSaved": "Open saved plans",
+    "learnMore": "See how it works"
   },
   "route": {
     "meta": "Route and border",
-    "title": "Where are you taking your goods?",
+    "title": "Where are you going?",
     "from": "From",
     "to": "To",
     "crossing": "Which crossing?",
     "otherTitle": "Other crossings",
-    "otherBody": "Not covered yet. Ask the Trade Information Desk at your crossing.",
-    "next": "Next: your goods"
+    "otherBody": "Not covered yet. Ask the Trade Information Desk.",
+    "next": "Next"
   },
   "product": {
     "meta": "Your goods",
     "title": "What are you taking?",
-    "searchLabel": "Search by any name you use",
+    "searchLabel": "Search your goods",
     "resultsLabel": "Matching goods",
-    "searchHint": "Press Search on your keyboard to see matches.",
+    "searchHint": "Use any name you know.",
     "matches": "{count, plural, one {# match} other {# matches}}",
-    "noMatches": "No goods match “{query}”. Try another name.",
+    "noMatches": "No match for “{query}”. Try another name.",
     "alsoCalled": "Also called {names}",
     "listYes": "On the Common List",
     "listNo": "Not on the Common List",
     "listUnknown": "List status unknown",
-    "skip": "Can't find it? <link>Continue without a match</link> and we will tell you who to ask.",
-    "next": "Next: value"
+    "skip": "Can't find it? <link>Skip this step</link>.",
+    "next": "Next"
   },
   "value": {
     "meta": "Quantity and value",
-    "title": "How much are you taking, and what is it worth?",
+    "title": "Quantity and value",
     "quantity": "Quantity",
     "unit": "Unit",
     "total": "Total value",
     "totalAria": "Total value in {currency}",
-    "usdLabel": "In US dollars, about",
+    "usdLabel": "About, in US dollars",
     "usdAmount": "USD {amount}",
-    "usdEmpty": "Enter a value to see it in dollars.",
-    "usdRate": "At {rate} {currency} per dollar, the rate our team set on {date}. Customs may use a different rate.",
-    "usdRateIllustrative": "This rate is an example for the prototype.",
-    "usdNoRate": "We do not have a current rate for {currency}. We cannot convert your value, so we will tell you who to ask.",
-    "threshold": "Consignments worth up to USD {amount} per crossing may use the Simplified Trade Regime, if the goods are on the Common List.",
-    "errorQuantity": "Enter how many you are taking.",
-    "errorValue": "Enter what your goods are worth.",
+    "usdEmpty": "Enter a value to see dollars.",
+    "usdRate": "{rate} {currency} per dollar, set {date}. Customs may use a different rate.",
+    "usdRateIllustrative": "Example rate for the prototype.",
+    "usdNoRate": "No rate for {currency} yet, so we can't convert. Ask the Trade Information Desk.",
+    "threshold": "Up to USD {amount} per crossing may use the Simplified Trade Regime, if your goods are on the Common List.",
+    "errorQuantity": "Enter a quantity.",
+    "errorValue": "Enter a value.",
     "next": "See my checklist"
   },
   "result": {
@@ -101,14 +102,14 @@
     "verdictLabel": "Our verdict",
     "summary": "{product}. {quantity} {unit} worth {currency} {value}, {from} to {to} through {border}.",
     "summaryNoProduct": "Goods not matched. {quantity} {unit} worth {currency} {value}, {from} to {to} through {border}.",
-    "caveat": "This is guidance, not clearance. Border officials make the final decision.",
+    "caveat": "Guidance only. Border officials decide.",
     "checklistTitle": "Your checklist",
     "progress": "{done} of {total} done",
-    "noChecklist": "We do not have a verified checklist for this case. Use the contacts below.",
+    "noChecklist": "No verified checklist for this case. Contact the desk below.",
     "save": "Save plan",
     "share": "Share to WhatsApp",
-    "signInNote": "You will be asked to sign in when you save.",
-    "helpTitle": "Not sure about something?",
+    "signInNote": "Sign in is only asked when you save.",
+    "helpTitle": "Need help?",
     "helpBody": "Ask the Trade Information Desk at {border}. {contact}",
     "helpNoContact": "Ask the Trade Information Desk at {border}."
   },
@@ -132,14 +133,14 @@
       "conflictingGeneric": "Sources disagree on this item",
       "unknown": "Not sure about something?"
     },
-    "unknownBody": "We have no source for this item. Ask the Trade Information Desk before you travel.",
+    "unknownBody": "No source yet. Ask the Trade Information Desk before you travel.",
     "checkedSource": "<source>{name}</source>, checked {date}",
     "dateMissing": "[date not recorded]",
     "sources": "Sources: {sources}",
     "where": "Where: {value}",
     "fee": "Official fee: {value}"
   },
-  "disclaimer": "This platform provides informational decision support based on referenced sources. It is not a customs authority, legal adviser, tax authority or government service. Verify current requirements with the relevant official authority before you trade.",
+  "disclaimer": "Informational guidance based on referenced sources. Not a customs authority, legal adviser or government service. Check requirements with the official authority before you trade.",
   "share": {
     "title": "My trade plan",
     "fee": "Official fee: {value}",
@@ -156,9 +157,106 @@
     "done": "{done} of {total} done",
     "notStarted": "Not started",
     "saved": "Saved {date}",
-    "ruleChanged": "A rule in this plan changed since you saved it. Open to see what is new.",
+    "ruleChanged": "A rule changed since you saved this. Open to see what's new.",
     "empty": "No saved plans yet.",
     "emptyCta": "Build your trade plan",
     "newPlan": "Build a new plan"
+  },
+  "nav": {
+    "home": "Home",
+    "how": "How it works",
+    "about": "About",
+    "help": "Help",
+    "plans": "Saved plans",
+    "start": "Start",
+    "label": "Main",
+    "short": {
+      "home": "Home",
+      "how": "How",
+      "start": "Start",
+      "plans": "Saved",
+      "help": "Help"
+    }
+  },
+  "footer": {
+    "tagline": "Border rules, made simple."
+  },
+  "how": {
+    "meta": "How it works",
+    "title": "How it works",
+    "lead": "Three answers in. One checklist out.",
+    "stepsTitle": "The steps",
+    "steps": [
+      {
+        "title": "Tell us your trip",
+        "body": "Route, goods and value."
+      },
+      {
+        "title": "We check the rules",
+        "body": "We match your trip to rules from official sources."
+      },
+      {
+        "title": "You get a checklist",
+        "body": "Documents, steps and fees, with a verdict."
+      },
+      {
+        "title": "Save or share",
+        "body": "Keep the plan or send it on WhatsApp."
+      }
+    ],
+    "trustTitle": "What the labels mean",
+    "trust": {
+      "verified": "Checked against its source.",
+      "unverified": "Has a source, but not checked recently.",
+      "conflicting": "Sources say different things. Ask the desk.",
+      "unknown": "No source. Ask the desk."
+    },
+    "cta": "Start a plan"
+  },
+  "about": {
+    "meta": "About",
+    "title": "About",
+    "lead": "CrossBorder Assist helps small-scale traders see what they need before they cross.",
+    "doesTitle": "What it does",
+    "does": "Turns trade rules into a checklist for your goods, with a source on every item.",
+    "notTitle": "What it is not",
+    "not": "Not a customs office. It does not clear goods or take payments. Border officials make the final call.",
+    "whereTitle": "Where it stands",
+    "where": "An early version, starting with Kenya to Uganda. We are still testing it with traders.",
+    "whoTitle": "Who made it",
+    "who": "A student team at Kisii University, as part of the SOEN 370 course.",
+    "cta": "Start a plan"
+  },
+  "help": {
+    "meta": "Help",
+    "title": "Help",
+    "lead": "Quick answers.",
+    "items": [
+      {
+        "q": "Do I need an account?",
+        "a": "No. Only to save a plan."
+      },
+      {
+        "q": "Is this official clearance?",
+        "a": "No. It is guidance. Border officials decide."
+      },
+      {
+        "q": "Where do the rules come from?",
+        "a": "Official sources. Every item shows its source and check date."
+      },
+      {
+        "q": "What if you can't confirm something?",
+        "a": "We say so, and point you to the Trade Information Desk at your crossing."
+      },
+      {
+        "q": "Are the exchange rates live?",
+        "a": "No. Our team sets a dated rate. Customs may use a different one."
+      },
+      {
+        "q": "Which crossings are covered?",
+        "a": "Only the ones listed when you start a plan. Others are not covered yet."
+      }
+    ],
+    "cta": "Start a plan"
   }
 }

@@ -1,4 +1,5 @@
 import { useTranslations } from "next-intl";
+import { Container, type ContainerWidth } from "@/components/ui/container";
 import type { CountryCode } from "@/lib/domain";
 
 /** Border marker sits at this point on the track (docs/DESIGN.md, Route strip). */
@@ -33,7 +34,7 @@ export function RouteStrip({
   return (
     <div
       aria-hidden="true"
-      className={`flex items-center gap-2.5 ${hero ? "pt-3.5 pb-1" : "bg-panel px-5 pt-4 pb-1.5"}`}
+      className={`flex items-center gap-2.5 ${hero ? "pt-3.5 pb-1" : "pt-4 pb-1.5"}`}
     >
       <span className={`font-bold text-brand ${hero ? "text-[15px]" : "text-sm"}`}>{t(from)}</span>
       <div className={`relative flex-1 ${hero ? "h-10" : "h-9"}`}>
@@ -66,6 +67,20 @@ export function RouteStrip({
       >
         {t(to)}
       </span>
+    </div>
+  );
+}
+
+/** The strip on its own white bar, as shown under the header on wizard and result screens. */
+export function RouteStripBar({
+  width,
+  ...strip
+}: { width: ContainerWidth } & Parameters<typeof RouteStrip>[0]) {
+  return (
+    <div className="bg-panel">
+      <Container width={width}>
+        <RouteStrip {...strip} />
+      </Container>
     </div>
   );
 }

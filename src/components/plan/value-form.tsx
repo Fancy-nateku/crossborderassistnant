@@ -64,7 +64,7 @@ export function ValueForm({
       action={getPathname({ href: "/plan/result", locale })}
       onSubmit={onSubmit}
       noValidate
-      className="flex flex-col gap-[22px]"
+      className="flex flex-col gap-[22px] lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8"
     >
       <input type="hidden" name="from" value={input.from} />
       <input type="hidden" name="to" value={input.to} />
@@ -73,7 +73,7 @@ export function ValueForm({
       <input type="hidden" name="currency" value={currency} />
       <input type="hidden" name="value" value={valueDigits} />
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 lg:col-span-2">
         <Field id="qty" label={t("quantity")} error={errors.qty}>
           <input
             ref={qtyRef}

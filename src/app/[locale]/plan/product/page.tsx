@@ -48,7 +48,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
       progress={ROUTE_PROGRESS.step2}
       footer={<Button type="submit" form="product-form">{t("product.next")}</Button>}
     >
-      <h1 className="m-0 text-[28px] leading-[1.15] font-bold">{t("product.title")}</h1>
+      <h1 className="m-0 text-[28px] leading-[1.15] font-bold md:text-[34px]">{t("product.title")}</h1>
 
       <form
         role="search"
@@ -93,10 +93,10 @@ export default async function ProductPage({ params, searchParams }: Props) {
         className="flex flex-col gap-2.5"
       >
         <HiddenPlanFields input={input} omit={["product"]} />
-        <fieldset className="m-0 flex flex-col gap-2.5 border-0 p-0">
+        <fieldset className="m-0 grid gap-2.5 border-0 p-0 md:grid-cols-2 lg:grid-cols-3">
           <legend className="sr-only">{t("product.resultsLabel")}</legend>
           {products.length === 0 ? (
-            <p className="m-0 text-base text-ink-muted">{t("product.noMatches", { query: q })}</p>
+            <p className="m-0 text-base text-ink-muted md:col-span-2 lg:col-span-3">{t("product.noMatches", { query: q })}</p>
           ) : null}
           {products.map((product, i) => {
             const alias = product.localNames.length

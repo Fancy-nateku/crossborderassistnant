@@ -1,0 +1,29 @@
+import { useTranslations } from "next-intl";
+import { Container } from "@/components/ui/container";
+import { Link } from "@/i18n/navigation";
+import { NavLinks } from "./nav-links";
+
+const startClass =
+  "flex min-h-11 items-center justify-center rounded-control bg-brand px-4 font-bold text-white no-underline hover:bg-brand-dark hover:text-white";
+
+/** Header for the content pages. The plan wizard keeps its own focused header. */
+export function SiteHeader() {
+  const t = useTranslations();
+
+  return (
+    <header className="border-b border-line bg-panel">
+      <Container className="flex items-center justify-between gap-4 py-2.5">
+        <Link href="/" className="text-lg font-bold text-brand no-underline">
+          {t("app.name")}
+        </Link>
+
+        <nav aria-label={t("nav.label")} className="hidden items-center gap-3 md:flex">
+          <NavLinks layout="row" />
+          <Link href="/plan/route" className={startClass}>
+            {t("nav.start")}
+          </Link>
+        </nav>
+      </Container>
+    </header>
+  );
+}
