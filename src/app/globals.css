@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+/* Design tokens: docs/DESIGN.md section 2. Components use these names only. */
+@theme {
+  --color-brand: #17767b;
+  --color-brand-dark: #0e5458;
+  --color-surface: #fafaf9;
+  --color-panel: #ffffff;
+  --color-muted: #f2f2f0;
+  --color-line: #e3e3e0;
+  --color-line-strong: #c9c9c5;
+  --color-ink: #1a1a1a;
+  --color-ink-muted: #5c5c5c;
+
+  /* Trust states: badges and callouts only. */
+  --color-verified-bg: #eaf4da;
+  --color-verified-fg: #3f6b12;
+  --color-unverified-bg: #fbefd9;
+  --color-unverified-fg: #7a4900;
+  --color-unverified-ink: #4f3000;
+  --color-conflicting-bg: #fbe5db;
+  --color-conflicting-fg: #9a3510;
+  --color-conflicting-ink: #5c2208;
+  --color-unknown-bg: #e8ecef;
+  --color-unknown-fg: #3e4a52;
+
+  --radius-control: 8px;
+  --radius-badge: 6px;
+
+  --font-sans: var(--font-atkinson), "Segoe UI", system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  a {
+    color: var(--color-brand);
+  }
+
+  a:hover {
+    color: var(--color-brand-dark);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "app": {
+    "name": "CrossBorder Assist",
+    "description": "Know what documents and official fees apply to your goods before you reach the border."
+  },
+  "common": {
+    "back": "Back",
+    "language": "Change language"
+  },
+  "countries": {
+    "KE": "Kenya",
+    "UG": "Uganda"
+  },
+  "currencies": {
+    "KES": "Kenyan shillings",
+    "UGX": "Ugandan shillings"
+  },
+  "units": {
+    "bags": "bags",
+    "kilograms": "kilograms",
+    "crates": "crates"
+  },
+  "unitOptions": {
+    "bags": "Bags",
+    "kilograms": "Kilograms",
+    "crates": "Crates"
+  },
+  "wizard": {
+    "stepOf": "Step {step} of 3"
+  },
+  "landing": {
+    "title": "Know what you need before you reach the border.",
+    "body": "Tell us your route, your goods and their value. You get a checklist of documents and official fees, with the source for each one.",
+    "cta": "Build your trade plan",
+    "noAccount": "No account needed to see your checklist.",
+    "stepsTitle": "Three questions, one checklist",
+    "steps": {
+      "route": {
+        "title": "Your route",
+        "body": "Where you start, where you are going and which crossing you use."
+      },
+      "goods": {
+        "title": "Your goods",
+        "body": "Search by the name you use at the market."
+      },
+      "value": {
+        "title": "Their value",
+        "body": "In shillings. We convert it for the rules that use dollars."
+      }
+    },
+    "trustTitle": "Every item shows where it comes from",
+    "trustNote": "When we are not sure, we say so and tell you who to ask.",
+    "openSaved": "Open saved plans"
+  },
+  "route": {
+    "meta": "Route and border",
+    "title": "Where are you taking your goods?",
+    "from": "From",
+    "to": "To",
+    "crossing": "Which crossing?",
+    "otherTitle": "Other crossings",
+    "otherBody": "Not covered yet. Ask the Trade Information Desk at your crossing.",
+    "next": "Next: your goods"
+  },
+  "product": {
+    "meta": "Your goods",
+    "title": "What are you taking?",
+    "searchLabel": "Search by any name you use",
+    "resultsLabel": "Matching goods",
+    "searchHint": "Press Search on your keyboard to see matches.",
+    "matches": "{count, plural, one {# match} other {# matches}}",
+    "noMatches": "No goods match “{query}”. Try another name.",
+    "alsoCalled": "Also called {names}",
+    "listYes": "On the Common List",
+    "listNo": "Not on the Common List",
+    "listUnknown": "List status unknown",
+    "skip": "Can't find it? <link>Continue without a match</link> and we will tell you who to ask.",
+    "next": "Next: value"
+  },
+  "value": {
+    "meta": "Quantity and value",
+    "title": "How much are you taking, and what is it worth?",
+    "quantity": "Quantity",
+    "unit": "Unit",
+    "total": "Total value",
+    "totalAria": "Total value in {currency}",
+    "usdLabel": "In US dollars, about",
+    "usdAmount": "USD {amount}",
+    "usdEmpty": "Enter a value to see it in dollars.",
+    "usdRate": "At {rate} {currency} per dollar, the rate our team set on {date}. Customs may use a different rate.",
+    "usdRateIllustrative": "This rate is an example for the prototype.",
+    "usdNoRate": "We do not have a current rate for {currency}. We cannot convert your value, so we will tell you who to ask.",
+    "threshold": "Consignments worth up to USD {amount} per crossing may use the Simplified Trade Regime, if the goods are on the Common List.",
+    "errorQuantity": "Enter how many you are taking.",
+    "errorValue": "Enter what your goods are worth.",
+    "next": "See my checklist"
+  },
+  "result": {
+    "meta": "Your trade plan",
+    "headerTitle": "Your trade plan",
+    "verdictLabel": "Our verdict",
+    "summary": "{product}. {quantity} {unit} worth {currency} {value}, {from} to {to} through {border}.",
+    "summaryNoProduct": "Goods not matched. {quantity} {unit} worth {currency} {value}, {from} to {to} through {border}.",
+    "caveat": "This is guidance, not clearance. Border officials make the final decision.",
+    "checklistTitle": "Your checklist",
+    "progress": "{done} of {total} done",
+    "noChecklist": "We do not have a verified checklist for this case. Use the contacts below.",
+    "save": "Save plan",
+    "share": "Share to WhatsApp",
+    "signInNote": "You will be asked to sign in when you save.",
+    "helpTitle": "Not sure about something?",
+    "helpBody": "Ask the Trade Information Desk at {border}. {contact}",
+    "helpNoContact": "Ask the Trade Information Desk at {border}."
+  },
+  "verdict": {
+    "likely_str_eligible": "Likely eligible for the Simplified Trade Regime",
+    "above_threshold": "Above USD {threshold}: the standard customs procedure applies",
+    "above_threshold_generic": "Above the Simplified Trade Regime limit: the standard customs procedure applies",
+    "not_on_common_list": "This product is not on the Common List",
+    "cannot_confirm": "We can't confirm the rules for this trade"
+  },
+  "trust": {
+    "badge": {
+      "verified": "Verified",
+      "unverified": "Not re-checked",
+      "conflicting": "Sources disagree",
+      "unknown": "Cannot confirm"
+    },
+    "callout": {
+      "unverified": "Not re-checked recently",
+      "conflicting": "Sources disagree on {subject}",
+      "conflictingGeneric": "Sources disagree on this item",
+      "unknown": "Not sure about something?"
+    },
+    "unknownBody": "We have no source for this item. Ask the Trade Information Desk before you travel.",
+    "checkedSource": "<source>{name}</source>, checked {date}",
+    "dateMissing": "[date not recorded]",
+    "sources": "Sources: {sources}",
+    "where": "Where: {value}",
+    "fee": "Official fee: {value}"
+  },
+  "disclaimer": "This platform provides informational decision support based on referenced sources. It is not a customs authority, legal adviser, tax authority or government service. Verify current requirements with the relevant official authority before you trade.",
+  "share": {
+    "title": "My trade plan",
+    "fee": "Official fee: {value}",
+    "source": "Source: {name} {url}",
+    "footer": "Built with CrossBorder Assist. This is guidance, not clearance."
+  },
+  "plans": {
+    "meta": "Saved plans",
+    "title": "Saved plans",
+    "planTitle": "{product} to {country}",
+    "planTitleNoProduct": "Goods not matched, to {country}",
+    "through": "Through {border}.",
+    "details": "{quantity} {unit}, {currency} {value}.",
+    "done": "{done} of {total} done",
+    "notStarted": "Not started",
+    "saved": "Saved {date}",
+    "ruleChanged": "A rule in this plan changed since you saved it. Open to see what is new.",
+    "empty": "No saved plans yet.",
+    "emptyCta": "Build your trade plan",
+    "newPlan": "Build a new plan"
+  }
+}
