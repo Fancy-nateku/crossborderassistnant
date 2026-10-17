@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Short landscape phones: `short:` utilities apply when the viewport is 480 px tall or less. */
+@custom-variant short (@media (max-height: 480px));
+
 /* Design tokens: docs/DESIGN.md section 2. Components use these names only. */
 @theme {
   --color-brand: #17767b;

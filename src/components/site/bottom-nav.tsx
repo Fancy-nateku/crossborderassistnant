@@ -4,14 +4,15 @@ import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { BookmarkIcon, HelpIcon, HomeIcon, InfoIcon, PlusIcon } from "@/components/ui/icons";
 import { Link, usePathname } from "@/i18n/navigation";
+import { TAB_KEYS, navHref, type NavKey } from "./nav-config";
 
-const TABS = [
-  { href: "/", key: "home", icon: <HomeIcon /> },
-  { href: "/how-it-works", key: "how", icon: <InfoIcon /> },
-  { href: "/plan/route", key: "start", icon: <PlusIcon />, primary: true },
-  { href: "/plans", key: "plans", icon: <BookmarkIcon /> },
-  { href: "/help", key: "help", icon: <HelpIcon /> },
-] as const satisfies readonly { href: string; key: string; icon: ReactNode; primary?: boolean }[];
+const ICONS: Partial<Record<NavKey, ReactNode>> = {
+  home: <HomeIcon />,
+  how: <InfoIcon />,
+  start: <PlusIcon />,
+  plans: <BookmarkIcon />,
+  help: <HelpIcon />,
+};
 
 /**
  * Phone-only tab bar for the content pages. The wizard and result screens
@@ -24,36 +25,40 @@ export function BottomNav() {
   return (
     <>
       {/* Keeps the last content clear of the fixed bar. */}
-      <div aria-hidden="true" className="h-[calc(4.5rem+env(safe-area-inset-bottom))] bg-panel md:hidden" />
+      <div
+        aria-hidden="true"
+        className="h-[calc(4.5rem+env(safe-area-inset-bottom))] bg-panel short:h-[calc(3rem+env(safe-area-inset-bottom))] md:hidden"
+      />
       <nav
         aria-label={t("label")}
         className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-panel pb-[env(safe-area-inset-bottom)] md:hidden"
       >
         <ul className="m-0 grid list-none grid-cols-5 p-0">
-          {TABS.map((tab) => {
-            const current = pathname === tab.href;
-            const primary = "primary" in tab;
+          {TAB_KEYS.map((key) => {
+            const href = navHref(key);
+            const current = pathname === href;
+            const primary = key === "start";
             return (
-              <li key={tab.href}>
+              <li key={key}>
                 <Link
-                  href={tab.href}
+                  href={href}
                   aria-current={current ? "page" : undefined}
-                  className={`flex min-h-[4.5rem] flex-col items-center justify-center gap-1 text-[13px] font-bold no-underline ${
+                  className={`flex min-h-[4.5rem] flex-col items-center justify-center gap-1 text-[13px] font-bold no-underline short:min-h-12 short:flex-row short:gap-2 ${
                     current || primary ? "text-brand" : "text-ink-muted hover:text-ink"
                   }`}
                 >
                   <span
                     className={
                       primary
-                        ? "flex size-9 items-center justify-center rounded-control bg-brand text-white"
+                        ? `flex size-9 items-center justify-center rounded-control bg-brand text-white short:size-8`
                         : current
-                          ? "flex h-9 w-12 items-center justify-center rounded-control bg-muted"
-                          : "flex h-9 w-12 items-center justify-center"
+                          ? `flex h-9 w-12 items-center justify-center rounded-control bg-muted short:h-8 short:w-9`
+                          : `flex h-9 w-12 items-center justify-center short:h-8 short:w-9`
                     }
                   >
-                    {tab.icon}
+                    {ICONS[key]}
                   </span>
-                  {t(`short.${tab.key}`)}
+                  <span>{t(`short.${key}`)}</span>
                 </Link>
               </li>
             );

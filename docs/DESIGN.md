@@ -67,7 +67,8 @@ Never go below 13 px. Sentence case everywhere. No all-caps labels.
 
 ## 3. Layout
 
-- Mobile-first. Design width 390 px, must work at 360 px. On wider screens, center content in a `max-width: 480px` column for the trader flow; admin screens may use up to 1200 px.
+- Mobile-first. Design width 390 px, must work at 360 px. On wider screens the wizard column grows: 480 px on phones, 720 px from 768 px, 880 px from 1024 px. Content pages and the result screen use up to 1120 px (1200 px from 1280 px). Admin screens may use up to 1200 px. See `docs/log.md` (2026-10-18).
+- Content pages (landing, How it works, About, Help, Saved plans): **site header** (wordmark + page links + Start from 768 px; wordmark only on phones) → main → **site footer** (links + disclaimer). On phones a **bottom tab bar** (Home, How, Start, Saved, Help) replaces the header links. The wizard and result screens do not use it.
 - Wizard screens: **header bar** (back button + "Step N of 3") → **route strip** → **main** → **sticky footer** with the single primary button.
 - Result screen: header → route strip (full) → verdict card → checklist → actions → help panel → disclaimer. Page scrolls; no sticky footer.
 
@@ -153,6 +154,8 @@ White card, 1 px `line`, 16 px padding, 10 px internal gap.
 | 4 | Value | `/[locale]/plan/value` | h1 "How much are you taking, and what is it worth?" Quantity + unit (Bags, Kilograms, Crates). Currency/value group. USD conversion panel showing amount, rate and the date the team set it, with "Customs may use a different rate." Neutral `muted` note about the USD 2,000 STR threshold. Footer: "See my checklist". |
 | 5 | Verdict and checklist | `/[locale]/plan/result` | Verdict card, "Your checklist" with items and trust states, primary "Save plan", secondary "Share to WhatsApp", note "You will be asked to sign in when you save.", help panel, disclaimer. |
 | 6 | Saved plans | `/[locale]/plans` | Header with wordmark + signed-in identifier. h1 "Saved plans", plan cards, footer "Build a new plan". Empty state: "No saved plans yet." + primary "Build your trade plan". |
+
+Added in code, not yet designed (need design review): **How it works** (`/how-it-works`), **About** (`/about`), **Help** (`/help`, short FAQ), the site header and footer, and the phone bottom tab bar.
 
 Not yet designed (build plainly with the same components, then bring to design review): Sign in, Requirement detail, Admin rules, Admin source registry.
 

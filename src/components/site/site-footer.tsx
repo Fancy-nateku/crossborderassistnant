@@ -2,13 +2,7 @@ import { useTranslations } from "next-intl";
 import { Disclaimer } from "@/components/trust/disclaimer";
 import { Container } from "@/components/ui/container";
 import { Link } from "@/i18n/navigation";
-
-const LINKS = [
-  { href: "/how-it-works", key: "how" },
-  { href: "/about", key: "about" },
-  { href: "/help", key: "help" },
-  { href: "/plans", key: "plans" },
-] as const;
+import { FOOTER_KEYS, navHref } from "./nav-config";
 
 export function SiteFooter() {
   const t = useTranslations();
@@ -23,9 +17,9 @@ export function SiteFooter() {
           </div>
           <nav aria-label={t("nav.label")}>
             <ul className="m-0 grid list-none grid-cols-2 gap-x-6 p-0 sm:flex sm:flex-wrap sm:gap-y-1">
-              {LINKS.map(({ href, key }) => (
-                <li key={href}>
-                  <Link href={href} className="flex min-h-11 items-center font-bold">
+              {FOOTER_KEYS.map((key) => (
+                <li key={key}>
+                  <Link href={navHref(key)} className="flex min-h-11 items-center font-bold">
                     {t(`nav.${key}`)}
                   </Link>
                 </li>

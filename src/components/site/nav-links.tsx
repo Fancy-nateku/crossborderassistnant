@@ -2,14 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
-
-const LINKS = [
-  { href: "/", key: "home" },
-  { href: "/how-it-works", key: "how" },
-  { href: "/about", key: "about" },
-  { href: "/help", key: "help" },
-  { href: "/plans", key: "plans" },
-] as const;
+import { HEADER_KEYS, navHref } from "./nav-config";
 
 /** Page links. Client-side only to mark the current page. */
 export function NavLinks({ layout }: { layout: "row" | "stack" }) {
@@ -20,10 +13,11 @@ export function NavLinks({ layout }: { layout: "row" | "stack" }) {
     <ul
       className={`m-0 flex list-none p-0 ${layout === "row" ? "items-center gap-1" : "flex-col"}`}
     >
-      {LINKS.map(({ href, key }) => {
+      {HEADER_KEYS.map((key) => {
+        const href = navHref(key);
         const current = pathname === href;
         return (
-          <li key={href}>
+          <li key={key}>
             <Link
               href={href}
               aria-current={current ? "page" : undefined}

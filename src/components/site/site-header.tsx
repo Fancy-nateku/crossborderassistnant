@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/container";
 import { Link } from "@/i18n/navigation";
+import { navHref } from "./nav-config";
 import { NavLinks } from "./nav-links";
 
 const startClass =
@@ -19,7 +20,7 @@ export function SiteHeader() {
 
         <nav aria-label={t("nav.label")} className="hidden items-center gap-3 md:flex">
           <NavLinks layout="row" />
-          <Link href="/plan/route" className={startClass}>
+          <Link href={navHref("start")} className={startClass}>
             {t("nav.start")}
           </Link>
         </nav>

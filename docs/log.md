@@ -28,3 +28,27 @@ Decisions and differences from the docs. Each needs a team nod:
 - **Result:** one column up to 1023 px. From 1024 px the checklist fills the right column and the verdict, actions and help panel stack on the left.
 - **Saved plans:** one, two, then three cards across.
 - Phone layout at 360 to 390 px is unchanged. Tap targets (44 px) and text sizes (16 px body) are the same at every width.
+
+## 2026-10-18 Site pages, shorter copy, phone tab bar, quality pass
+
+Needs a team nod on everything below. Pushed to `main` by one member before review; this entry and the follow-up branch `chore/quality-pass` are the catch-up.
+
+- **New pages:** How it works, About, Help (FAQ). Not in `DESIGN.md` screens table; added there as "not yet designed".
+- **Site header, footer and phone bottom tab bar** on content pages. Wizard and result keep their own focused header and sticky action. Page links live in `src/components/site/nav-config.ts`.
+- **Copy shortened** across `messages/en.json`. **Wording to review:** the disclaimer is shortened ("Informational guidance based on referenced sources. Not a customs authority, legal adviser or government service. Check requirements with the official authority before you trade."). It drops "tax authority". `CLAUDE.md` says legal wording goes to the team. The About page text is based only on `CLAUDE.md` ("student team at Kisii University", SOEN 370) and needs a factual check by the team.
+- **Wizard column widths** are now 720 px (768 px+) and 880 px (1024 px+), up from the 640 px in the entry above. Product options go three across from 1024 px. On the value step the value and dollar panel sit side by side from 1024 px. On the result page the verdict column stays in view while the checklist scrolls from 1024 px.
+- **Safe areas:** `viewportFit: "cover"` and bottom padding for notches and gesture bars. The tab bar shrinks on short landscape screens (height up to 480 px).
+
+Quality pass (production build, `next start`, Lighthouse mobile defaults: simulated slow 4G, 4x CPU slowdown, run on a development laptop, one run each):
+
+| Page | Performance | Accessibility | Best practices | LCP | TBT |
+| --- | --- | --- | --- | --- | --- |
+| Landing | 91 | 100 | 100 | 1.4 s | 380 ms |
+| About | 92 | 100 | 100 | 1.3 s | 350 ms |
+| Route step | 92 | 100 | 100 | 1.8 s | 330 ms |
+| Result | 95 | 100 | 100 | 2.1 s | 230 ms |
+
+- Total blocking time is mostly React and Next runtime (about 119 KB of about 130 KB transferred JavaScript on the landing page). Our own chunk is about 2 KB. No code change made.
+- The result page fails Lighthouse's back/forward-cache check because Next serves dynamic pages as no-store. Not changed.
+- Automated checks do not replace testing on a real low-end Android phone on a slow connection. Not done yet.
+- Added component tests for the page links, bottom bar and footer disclaimer.
