@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# playwright (baselines in e2e/**/*-snapshots are committed; these are not)
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

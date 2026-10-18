@@ -142,6 +142,11 @@ prisma/
 - Each test scenario cites the source/rule version it checks against.
 - Component tests for trust states (React Testing Library).
 - Keep an expected-vs-actual record for the SOEN 370 test plan.
+- `npm test` runs the Vitest suite: rules, components and every screen. Screens are async
+  server components, so they render through the harness in `src/test/` (see `docs/log.md`).
+- `npm run test:visual` runs the Playwright browser checks (layout, tap targets, visual
+  baselines) against a production build on port 3100. Update baselines deliberately with
+  `npm run test:visual:update`, never to turn a red test green.
 
 ## Git workflow
 
