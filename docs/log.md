@@ -141,16 +141,16 @@ Checked by mutation, to confirm the suites fail when something breaks:
 
 All three changes were reverted and the suites re-run green.
 
-Two findings from the measurements. Neither is changed here, because both are design
-decisions for the team:
+Two findings from the measurements. Neither was changed in this entry, because both looked
+like design decisions for the team. **Both were fixed straight after; see the entry below.**
 
 - **The header wordmark** ("CrossBorder Assist") is a 28 px-tall link, under the 44 px tap
   target rule (NFR-04, and `CLAUDE.md`). A one-line fix, but it changes header height.
 - **The route strip's border name** renders at 12 px, below the 13 px floor the rest of the
   design system uses.
 
-Both are named explicitly in `e2e/screens.layout.spec.ts` as exclusions rather than quietly
-skipped, so the test records them instead of hiding them.
+Both were named explicitly in `e2e/screens.layout.spec.ts` as exclusions rather than quietly
+skipped, so the test recorded them instead of hiding them. Those exclusions are now gone.
 
 Related and wider: NFR-05 and `CLAUDE.md` both ask for body text of at least 16 px, while
 `DESIGN.md`, the design canvas and the code use 13 to 15 px for secondary text (badges, dates,
@@ -159,7 +159,7 @@ flagged rather than silently resolved, so the layout test guards the 13 px floor
 picking a side. The team should settle which document is right; if NFR-05 wins, it is a copy
 and token change across most screens, and the baselines would be regenerated.
 
-Still open:
+Still open after this entry (see the next entry for what the fixes closed):
 - Real low-end Android devices on a slow connection. Unchanged: not done yet.
 - Screen-reader walkthroughs by hand. The assertions cover names, roles and live regions,
   not whether the result screen is pleasant to listen to.
@@ -169,3 +169,57 @@ Still open:
   adopts them, regenerate there (`npm run test:visual:update`) or run in a container. A
   mismatch on another machine is not automatically a bug.
 - The Swahili locale still does not exist; both suites pin to `en`.
+
+## 2026-10-18 Tap target and type floor fixed
+
+Closed the two findings from the entry above. Both turned out to be smaller decisions than
+they looked, and in the second case `DESIGN.md` disagreed with itself.
+
+**Header wordmark is now a 44 px tap target** (`src/components/site/site-header.tsx`). The
+link keeps its 18 px/700 type and gains `flex min-h-11 items-center`, so the hit area meets
+NFR-04 without the wordmark growing. Header padding went from 10 px to 6 px to pay for it,
+which makes the site header **56 px at every width**: 8 px shorter than it was on desktop,
+8 px taller than it was on phones. The old phone header was 48 px because only the wordmark
+set its height; on desktop the Start button already forced 44 px, so desktop was 64 px and
+the two never matched. `DESIGN.md` section 5 lists the site header as "added in code, not
+yet designed", so no design decision was overridden here. The height is written into
+`DESIGN.md` now so a review has something to argue with.
+
+**Route strip border name is now 13 px** (`src/components/plan/route-strip.tsx`, `text-xs`
+to `text-[13px]`). This one was a contradiction inside `DESIGN.md`, not between documents:
+section 2 (Type) says "Never go below 13 px", while section 4 (Route strip) specified the
+border marker name at 12 px. The general typographic rule wins over one component line, the
+change is invisible at a glance, and 13 px is the size already used by badges, source lines,
+the disclaimer, saved-plan dates and the bottom nav. `DESIGN.md` was corrected to 13 px with
+a note, rather than leaving the two sections to disagree.
+
+**The layout test got stricter, not looser.** `e2e/screens.layout.spec.ts` no longer carries
+a `KNOWN_SMALL_TARGETS` exclusion for the wordmark, and the type-size test no longer skips
+`aria-hidden` subtrees — small print is hard to read whether or not a screen reader
+announces it, and the route strip is the only decorative text on the site.
+
+Checked by mutation, both fixes reverted at once and the suite re-run:
+
+| Change | Expected | Actual |
+| --- | --- | --- |
+| Wordmark back to 28 px and border name back to 12 px | Tap target and type tests fail | 12 failed on `phone-360`: 5 tap target (the five pages with the site header), 7 type size (every screen with a route strip) |
+
+Reverted, rebuilt, and the full suite re-run: 202 Vitest tests in 16 files, and 77 Playwright
+tests passed with 11 skipped (the touch rule on desktop).
+
+**All 22 baselines were regenerated** against the corrected build. Ten exceeded the diff
+tolerance on their own (the five header pages at both widths); the 1 px label change was
+under `maxDiffPixelRatio` on the wizard and result screens, so those were rewritten with
+`--update-snapshots=all` to keep every committed baseline byte-exact to what the app renders
+rather than merely within tolerance of it. Two consecutive runs matched.
+
+Still open, unchanged by this entry:
+- **The 16 px body text disagreement is still open and still deliberate.** NFR-05 and
+  `CLAUDE.md` ask for at least 16 px; `DESIGN.md` assigns 13 to 15 px to secondary text.
+  That is a disagreement between the PRD and the design spec about what the product should
+  be, not an internal contradiction, so per `CLAUDE.md` it goes to the team rather than
+  getting picked here. Deciding it for NFR-05 is a token change across most screens plus a
+  baseline regeneration. The layout test keeps guarding the 13 px floor meanwhile.
+- Real low-end Android devices on a slow connection, screen-reader walkthroughs by hand,
+  contrast ratios, machine-dependent baselines and the missing Swahili locale all stand as
+  listed in the entry above.

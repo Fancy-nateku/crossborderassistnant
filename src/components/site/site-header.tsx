@@ -13,8 +13,13 @@ export function SiteHeader() {
 
   return (
     <header className="border-b border-line bg-panel">
-      <Container className="flex items-center justify-between gap-4 py-2.5">
-        <Link href="/" className="text-lg font-bold text-brand no-underline">
+      <Container className="flex items-center justify-between gap-4 py-1.5">
+        {/* min-h-11 keeps the wordmark a 44 px tap target (CLAUDE.md), which also makes
+            the header one height on phones and on desktop, where Start already sets it. */}
+        <Link
+          href="/"
+          className="flex min-h-11 items-center text-lg font-bold text-brand no-underline"
+        >
           {t("app.name")}
         </Link>
 

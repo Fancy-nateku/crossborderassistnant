@@ -7,17 +7,11 @@ import { SCREENS } from "./screens";
  * (`src/app/[locale]/screens.a11y.test.tsx`).
  */
 
-/** The app name in the header is a 28 px wordmark, under the 44 px rule. Left as it is
- *  pending a team decision on header height; see docs/log.md. */
-const KNOWN_SMALL_TARGETS = ["CrossBorder Assist"];
-
-/** The smallest size in the design system (badges, dates, source lines). CLAUDE.md asks
- *  for 16 px body text while DESIGN.md and the canvas use 13 to 15 px for secondary text;
- *  that disagreement is for the team, so this guards the floor rather than picking a side.
- *
- *  Decorative subtrees are excluded, and today the only text in one is the route strip's
- *  border name at 12 px — under this floor. Flagged for the team, not changed here;
- *  see docs/log.md. */
+/** DESIGN.md, Type: "Never go below 13 px." CLAUDE.md asks for 16 px body text while
+ *  DESIGN.md uses 13 to 15 px for secondary text (badges, dates, source lines); that
+ *  disagreement is for the team, so this guards the stated floor rather than picking a
+ *  side. Decorative text counts too: small print is hard to read whether or not a screen
+ *  reader announces it. */
 const SMALLEST_TEXT_PX = 13;
 
 type TapTarget = { tag: string; text: string; width: number; height: number };
@@ -29,7 +23,7 @@ type TapTarget = { tag: string; text: string; width: number; height: number };
 async function tapTargets(page: Page): Promise<TapTarget[]> {
   return page.$$eval(
     "a, button, input:not([type=hidden]), select, [role=button]",
-    (nodes, known) =>
+    (nodes) =>
       nodes
         .map((node) => {
           const style = getComputedStyle(node);
@@ -39,14 +33,11 @@ async function tapTargets(page: Page): Promise<TapTarget[]> {
           // paragraph around them, so they are not tap targets in the layout sense.
           if (node.closest("p")) return null;
 
-          const text = (node.textContent ?? "").trim();
-          if (known.includes(text)) return null;
-
           const label = node.closest("label");
           const box = (label ?? node).getBoundingClientRect();
           return {
             tag: node.tagName.toLowerCase(),
-            text: text.slice(0, 40),
+            text: (node.textContent ?? "").trim().slice(0, 40),
             width: Math.round(box.width),
             height: Math.round(box.height),
           };
@@ -54,7 +45,6 @@ async function tapTargets(page: Page): Promise<TapTarget[]> {
         .filter(
           (box): box is TapTarget => box !== null && box.width > 0 && box.height > 0,
         ),
-    KNOWN_SMALL_TARGETS,
   );
 }
 
@@ -81,14 +71,13 @@ for (const { name, path } of SCREENS) {
       expect(targets.filter((t) => t.height < 44)).toEqual([]);
     });
 
-    test("never drops content text below the smallest size in the design system", async ({ page }) => {
+    test("never drops text below the smallest size in the design system", async ({ page }) => {
       await page.goto(path);
 
       const tooSmall = await page.$$eval(
         "body *",
         (nodes, floor) =>
           nodes
-            .filter((node) => !node.closest("[aria-hidden=true]"))
             .filter((node) =>
               [...node.childNodes].some(
                 (child) => child.nodeType === Node.TEXT_NODE && (child.textContent ?? "").trim(),

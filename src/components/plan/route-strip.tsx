@@ -50,7 +50,7 @@ export function RouteStrip({
           style={{ left: `${BORDER_POSITION}%` }}
         />
         <div
-          className="absolute top-6 -translate-x-[40%] text-xs text-ink-muted"
+          className="absolute top-6 -translate-x-[40%] text-[13px] text-ink-muted"
           style={{ left: `${BORDER_POSITION}%` }}
         >
           {borderName}

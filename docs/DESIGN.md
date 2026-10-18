@@ -75,13 +75,13 @@ Never go below 13 px. Sentence case everywhere. No all-caps labels.
 ## 4. Components
 
 ### Header bar
-White `panel`, 1 px bottom `line`. Back link is a 44×44 icon button (`aria-label="Back"`, chevron stroke icon, 2.2 px stroke) followed by 16 px/700 step text. Landing variant: wordmark "CrossBorder Assist" 18 px/700 in `brand` + language button.
+White `panel`, 1 px bottom `line`. Back link is a 44×44 icon button (`aria-label="Back"`, chevron stroke icon, 2.2 px stroke) followed by 16 px/700 step text. Landing variant: wordmark "CrossBorder Assist" 18 px/700 in `brand` + language button. The wordmark is a link, so its hit area is 44 px tall; with 6 px padding the site header is 56 px on every width.
 
 ### Route strip (signature element)
 Shows where the user is in the journey as a trip from Kenya to Uganda.
 - Row: "Kenya" label · track · "Uganda" label. Labels 14 px/700; start label `brand`, end label `ink-muted` until the result screen, then `brand`.
 - Track: 2 px dashed `line-strong` full width; solid 4 px `brand` progress bar from the left.
-- Border marker: 3×24 px `ink` bar at 68% with "Busia" (12 px, `ink-muted`) beneath. The marker name comes from the selected border.
+- Border marker: 3×24 px `ink` bar at 68% with "Busia" (13 px, `ink-muted`) beneath. The marker name comes from the selected border. (Was 12 px, which contradicted the 13 px floor above; see `docs/log.md` 2026-10-18.)
 - Position dot: 14 px circle, `panel` fill, 2 px `brand` border, at the progress end.
 - Progress by screen: step 1 = 18%, step 2 = 38%, step 3 = 58%, result = 100%.
 - Decorative: wrap in `aria-hidden="true"` and expose progress as text ("Step 2 of 3") in the header.
