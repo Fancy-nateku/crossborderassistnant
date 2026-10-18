@@ -144,8 +144,10 @@ prisma/
 - Keep an expected-vs-actual record for the SOEN 370 test plan.
 - `npm test` runs the Vitest suite: rules, components and every screen. Screens are async
   server components, so they render through the harness in `src/test/` (see `docs/log.md`).
-- `npm run test:visual` runs the Playwright browser checks (layout, tap targets, visual
-  baselines) against a production build on port 3100. Update baselines deliberately with
+- `npm run test:visual` runs every Playwright browser check against a production build on
+  port 3100: layout and tap targets, the type-size floor, text contrast, visible focus
+  states, and the visual baselines. These need a real browser; structure, names and live
+  regions are asserted in jsdom by `npm test`. Update baselines deliberately with
   `npm run test:visual:update`, never to turn a red test green.
 
 ## Git workflow
