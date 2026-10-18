@@ -223,3 +223,40 @@ Still open, unchanged by this entry:
 - Real low-end Android devices on a slow connection, screen-reader walkthroughs by hand,
   contrast ratios, machine-dependent baselines and the missing Swahili locale all stand as
   listed in the entry above.
+
+## 2026-10-18 Text contrast measured
+
+Closed the "contrast ratios, not measured" item. `e2e/screens.contrast.spec.ts` computes the
+WCAG 2.1 relative-luminance ratio for every piece of text on all eleven screen states at both
+widths, from the colours the browser actually computed rather than from the token table
+(1.4.3; NFR-05, NFR-06, and CLAUDE.md's high contrast for outdoor reading). No new dependency:
+the formula is about twenty lines, and the flat palette means the background behind text is
+the nearest painted ancestor, with translucent layers composited back down onto white.
+
+AA thresholds: 4.5:1 for body text, 3:1 for large text (>= 24 px, or >= 18.66 px bold).
+
+**Everything passes.** 22 tests green. Measured ratios include `ink` on `panel` at about
+16.9:1, `ink-muted` on `panel` at about 6.7:1, white on `brand` at about 5.4:1, and the four
+trust badges between about 5.6:1 and 7.7:1, so the teal and the badge palette clear AA for
+body text as drawn.
+
+Checked by mutation:
+
+| Change | Expected | Actual |
+| --- | --- | --- |
+| `--color-ink-muted` from #5c5c5c to #9a9a9a, rebuilt | Secondary text fails AA | 22 of 22 failed, reporting ratios of 2.69:1 and 2.81:1 |
+
+Reverted and re-run green. The test also asserts it sampled more than five elements, so a
+selector or filter bug cannot read as a pass.
+
+Still open on contrast:
+- **Non-text contrast (1.4.11) is not covered and looks like it fails.** `line-strong`
+  (#C9C9C5), the 1.5 px border on inputs and unselected option rows, is about 1.66:1 against
+  white, under the 3:1 that 1.4.11 asks for on the visual boundary of a control. Not changed
+  here: `line-strong` is a named token in both CLAUDE.md and DESIGN.md, so darkening it is a
+  team decision, and it would move every input, option row and card border. Labels sit above
+  every field, so a control is never identified by its border alone.
+- Hover, focus and pressed states are not measured, only the resting state. Focus rings use
+  `brand`, which clears AA against white as text, but 1.4.11 wants the ring measured against
+  both the field and the page.
+
