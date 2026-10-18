@@ -256,7 +256,46 @@ Still open on contrast:
   here: `line-strong` is a named token in both CLAUDE.md and DESIGN.md, so darkening it is a
   team decision, and it would move every input, option row and card border. Labels sit above
   every field, so a control is never identified by its border alone.
-- Hover, focus and pressed states are not measured, only the resting state. Focus rings use
-  `brand`, which clears AA against white as text, but 1.4.11 wants the ring measured against
-  both the field and the page.
+- Hover and pressed states are not measured, only the resting state. Focus visibility is
+  now covered by the entry below, though 1.4.11 still wants the ring's own contrast measured
+  against both the field and the page, which is not done.
+
+## 2026-10-18 Focus visibility checked
+
+`CLAUDE.md` lists three things under "accessible by default": labels on every input, visible
+focus states, and `aria-live` on the verdict. The first and third were already asserted in
+jsdom; the second could not be, because jsdom applies no styles. `e2e/screens.focus.spec.ts`
+closes that gap in a real browser (WCAG 2.1 AA, 2.4.7; NFR-06).
+
+How it works: tag every focusable control, record how each looks while nothing is focused,
+then walk the page with real `Tab` presses and compare each control's computed style when
+focused against its resting style. Focus is moved by keyboard rather than `element.focus()`
+so `:focus-visible` resolves the way it does in use, which also means the test follows the
+keyboard path a trader would take. A control passes if any of outline style, width or colour,
+box shadow, border colour or width, background, text colour or underline changes.
+`outline-offset` is deliberately not a signal: on its own, with no outline drawn, it changes
+nothing a user can see.
+
+**All 22 tests pass.** Focus comes from one global rule in `globals.css`
+(`:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px }`), so the
+value of this test is as a guard: it fails the moment a component suppresses the ring.
+
+Checked by mutation:
+
+| Change | Expected | Actual |
+| --- | --- | --- |
+| Global `:focus-visible` rule to `outline: none`, rebuilt | Focus tests fail | 22 of 22 failed |
+
+Reverted and re-run green. Full suite after this entry: 202 Vitest tests in 16 files, and
+121 Playwright tests passed with 11 skipped (the touch rule on desktop).
+
+The test also asserts it stopped on at least one control, so a page that never takes focus
+cannot read as a pass.
+
+Still open:
+- **Focus order is not asserted, only focus visibility.** The test walks the tab order and
+  would notice a control the keyboard cannot reach at all, but it does not check that the
+  order matches the visual order (2.4.3).
+- Hover and pressed states, and the non-text contrast of the ring itself (1.4.11), as noted
+  in the entry above.
 
