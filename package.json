@@ -2,24 +2,44 @@
   "name": "crossborderassistnant",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "backend"
+  ],
   "scripts": {
+    "postinstall": "prisma generate --schema prisma/schema.prisma",
     "dev": "next dev",
+    "dev:backend": "npm run dev --workspace backend",
     "build": "next build",
+    "build:backend": "npm run build --workspace backend",
     "start": "next start",
+    "start:backend": "npm run start --workspace backend",
+    "typecheck:backend": "npm run typecheck --workspace backend",
+    "test:backend": "npm run test --workspace backend",
     "lint": "eslint",
     "test": "vitest run",
+    "pretest:visual": "npm run build:backend",
     "test:visual": "playwright test",
     "test:visual:update": "playwright test --update-snapshots",
+    "seed:references": "tsx prisma/seed-reference-data.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "cors": "^2.8.5",
+    "decimal.js": "^10.6.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.1.0",
     "next": "16.4.2",
+    "next-auth": "^5.0.0-beta.32",
     "next-intl": "^4.14.9",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
     "@playwright/test": "^1.64.1",
     "@tailwindcss/turbopack": "^4",
     "@testing-library/dom": "^10.4.2",
@@ -32,8 +52,10 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.2",
     "jsdom": "^29.1.1",
+    "prisma": "^6.19.3",
     "tailwindcss": "^4",
     "typescript": "^5",
+    "tsx": "^4.20.6",
     "vitest": "^4.1.12"
   }
 }

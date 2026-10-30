@@ -32,7 +32,7 @@ describe("help screen", () => {
     await renderScreen(HelpPage);
 
     expect(screen.getByText("Do I need an account?")).toBeInTheDocument();
-    expect(screen.getByText("No. Only to save a plan.")).toBeInTheDocument();
+    expect(screen.getByText(messages.help.items[0].a)).toBeInTheDocument();
     expect(screen.getByText("No. It is guidance. Border officials decide.")).toBeInTheDocument();
   });
 

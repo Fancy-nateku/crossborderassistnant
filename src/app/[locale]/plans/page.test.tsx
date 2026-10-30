@@ -1,112 +1,48 @@
-import { screen, within } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { Session } from "@/lib/auth";
-import { savedPlans } from "@/lib/data/mock/fixtures";
-import type { SavedPlan } from "@/lib/domain";
 import { messages, metadataTitle, renderScreen } from "@/test/screen";
+import { saveDevicePlan } from "@/lib/plan/device-plans";
 import PlansPage, { generateMetadata } from "./page";
 
 vi.mock("next-intl/server", () => import("@/test/mocks/intl-server"));
 vi.mock("@/i18n/navigation", () => import("@/test/mocks/navigation"));
 
-// What the screen reads is swapped per test: saved plans and sign-in are both
-// stubs until the backend lands, and the empty state needs its own data.
-const state = vi.hoisted(() => ({
-  plans: null as SavedPlan[] | null,
-  session: { identifier: "07XX XXX XXX" } as Session | null,
-}));
+const firstInput = {
+  from: "KE",
+  to: "UG",
+  borderId: "busia",
+  productId: "beans-dry",
+  quantity: 5,
+  unit: "bags",
+  currency: "KES",
+  valueLocal: 30000,
+} as const;
 
-vi.mock("@/lib/auth", () => ({ getSession: async () => state.session }));
-vi.mock("@/lib/data", async () => {
-  const { mockRepository } = await import("@/lib/data/mock/repository");
-  return {
-    repository: {
-      ...mockRepository,
-      listSavedPlans: async () => state.plans ?? mockRepository.listSavedPlans(),
-    },
-  };
-});
+const secondInput = {
+  ...firstInput,
+  borderId: "malaba",
+  productId: "maize-grain",
+  quantity: null,
+  valueLocal: null,
+} as const;
 
 const cards = () => screen.getAllByRole("link", { name: /to Uganda/ });
 
 beforeEach(() => {
-  state.plans = null;
-  state.session = { identifier: "07XX XXX XXX" };
+  window.localStorage.clear();
 });
 
 describe("saved plans screen", () => {
-  it("titles the page", async () => {
+  it("titles the page and explains that plans stay on this device", async () => {
     expect(await metadataTitle(generateMetadata)).toBe(messages.plans.meta);
 
     await renderScreen(PlansPage);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(messages.plans.title);
+    expect(screen.getByText(messages.plans.deviceNote)).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /sign in/i })).not.toBeInTheDocument();
   });
 
-  it("shows who is signed in", async () => {
-    await renderScreen(PlansPage);
-    expect(screen.getByText("07XX XXX XXX")).toBeInTheDocument();
-  });
-
-  it("still lists plans when nobody is signed in", async () => {
-    state.session = null;
-    await renderScreen(PlansPage);
-
-    expect(screen.queryByText("07XX XXX XXX")).not.toBeInTheDocument();
-    expect(cards()).toHaveLength(savedPlans.length);
-  });
-
-  it("names each plan by its goods, destination and crossing", async () => {
-    await renderScreen(PlansPage);
-
-    const [first, second] = cards();
-    expect(first).toHaveTextContent("Beans, dry to Uganda");
-    expect(first).toHaveTextContent("Through Busia. 5 bags, KES 30,000.");
-    expect(second).toHaveTextContent("Maize grain to Uganda");
-    expect(second).toHaveTextContent("Through Malaba.");
-  });
-
-  it("shows checklist progress, and 'not started' instead of zero", async () => {
-    await renderScreen(PlansPage);
-
-    const [first, second] = cards();
-    expect(within(first).getByText("1 of 4 done")).toBeInTheDocument();
-    expect(within(second).getByText(messages.plans.notStarted)).toBeInTheDocument();
-  });
-
-  it("dates each save", async () => {
-    await renderScreen(PlansPage);
-
-    expect(screen.getAllByText("Saved 7 Oct 2026")).toHaveLength(savedPlans.length);
-  });
-
-  it("warns when a rule changed since the plan was saved", async () => {
-    await renderScreen(PlansPage);
-
-    expect(screen.getAllByText(messages.plans.ruleChanged)).toHaveLength(1);
-    expect(cards()[1]).toHaveTextContent(messages.plans.ruleChanged);
-  });
-
-  it("reopens a plan on the result screen with its own inputs", async () => {
-    await renderScreen(PlansPage);
-
-    const href = cards()[0].getAttribute("href") ?? "";
-    expect(href).toContain("/plan/result?");
-    expect(href).toContain("product=beans-dry");
-    expect(href).toContain("border=busia");
-    expect(href).toContain("value=30000");
-  });
-
-  it("offers a new plan alongside the saved ones", async () => {
-    await renderScreen(PlansPage);
-
-    expect(screen.getByRole("link", { name: messages.plans.newPlan })).toHaveAttribute(
-      "href",
-      "/plan/route",
-    );
-  });
-
-  it("asks for a first plan when there are none", async () => {
-    state.plans = [];
+  it("shows an empty state without requiring an account", async () => {
     await renderScreen(PlansPage);
 
     expect(screen.getByText(messages.plans.empty)).toBeInTheDocument();
@@ -114,21 +50,67 @@ describe("saved plans screen", () => {
       "href",
       "/plan/route",
     );
-    expect(screen.queryByRole("link", { name: messages.plans.newPlan })).not.toBeInTheDocument();
   });
 
-  it("drops a plan whose crossing is no longer offered rather than rendering a broken card", async () => {
-    state.plans = [{ ...savedPlans[0], input: { ...savedPlans[0].input, borderId: "retired" } }];
+  it("shows a recoverable warning when saved browser data is malformed", async () => {
+    window.localStorage.setItem("crossborderassist.device-plans.v1", "{");
     await renderScreen(PlansPage);
 
-    expect(screen.queryByText(/to Uganda/)).not.toBeInTheDocument();
-    expect(screen.getByText(messages.plans.empty)).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent(messages.plans.storageUnavailable);
   });
 
-  it("keeps the site header and bottom nav for getting around", async () => {
+  it("lists locally saved plans and reopens them with their own inputs", async () => {
+    saveDevicePlan({
+      input: firstInput,
+      borderName: "Busia",
+      productName: "Beans, dry",
+      verdict: "likely_str_eligible",
+      totalCount: 2,
+      requirementIds: ["origin", "declaration"],
+    });
+    saveDevicePlan({
+      input: secondInput,
+      borderName: "Malaba",
+      productName: "Maize grain",
+      verdict: "cannot_confirm",
+      totalCount: 0,
+      requirementIds: [],
+    });
+
     await renderScreen(PlansPage);
 
-    expect(screen.getAllByRole("navigation", { name: messages.nav.label })).not.toHaveLength(0);
-    expect(screen.getByRole("link", { name: messages.app.name })).toHaveAttribute("href", "/");
+    expect(cards()).toHaveLength(2);
+    const beans = cards().find((card) => card.textContent?.includes("Beans, dry to Uganda"));
+    const maize = cards().find((card) => card.textContent?.includes("Maize grain to Uganda"));
+    expect(beans).toHaveTextContent("Through Busia. 5 bags, KES 30,000.");
+    expect(maize).toHaveTextContent("Through Malaba.");
+    expect(beans?.getAttribute("href")).toContain("/plan/result?");
+    expect(beans?.getAttribute("href")).toContain("product=beans-dry");
+    expect(beans?.getAttribute("href")).toContain("border=busia");
+    expect(beans?.getAttribute("href")).toContain("value=30000");
+    expect(beans).toHaveTextContent(/Saved \d/);
+    expect(maize).toHaveTextContent(/Saved \d/);
+  });
+
+  it("requires confirmation before removing a saved plan", async () => {
+    saveDevicePlan({
+      input: firstInput,
+      borderName: "Busia",
+      productName: "Beans, dry",
+      verdict: "likely_str_eligible",
+      totalCount: 1,
+      requirementIds: ["origin"],
+    });
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
+    await renderScreen(PlansPage);
+
+    fireEvent.click(screen.getByRole("button", { name: messages.plans.delete }));
+    expect(confirm).toHaveBeenCalledWith(messages.plans.deleteConfirm);
+    expect(cards()).toHaveLength(1);
+
+    confirm.mockReturnValue(true);
+    fireEvent.click(screen.getByRole("button", { name: messages.plans.delete }));
+    await waitFor(() => expect(screen.getByText(messages.plans.empty)).toBeInTheDocument());
+    confirm.mockRestore();
   });
 });

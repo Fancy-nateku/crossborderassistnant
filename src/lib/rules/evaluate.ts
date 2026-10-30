@@ -51,12 +51,24 @@ function matches(c: RuleConditions, input: EvaluationInput): boolean {
  * Pure rules engine: same inputs and rules always give the same output.
  * No matching rule means "cannot_confirm". There is no fallback guess
  * (CLAUDE.md rule 4).
+ *
+ * Deterministic tie-break order:
+ * 1. Priority (highest wins)
+ * 2. Effective date (most recent wins)
+ * 3. Version (highest version wins for same rule ID)
+ * 4. Rule ID lexical order
  */
 export function evaluate(input: EvaluationInput, rules: readonly Rule[]): Evaluation {
   const winner = rules
     .filter((r) => r.status === "active" && r.effectiveFrom <= input.asOf)
     .filter((r) => matches(r.conditions, input))
-    .sort((a, b) => b.priority - a.priority || a.id.localeCompare(b.id))[0];
+    .sort(
+      (a, b) =>
+        b.priority - a.priority ||
+        b.effectiveFrom.localeCompare(a.effectiveFrom) ||
+        b.version - a.version ||
+        a.id.localeCompare(b.id),
+    )[0];
 
   if (!winner) return CANNOT_CONFIRM;
 
@@ -68,10 +80,45 @@ export function evaluate(input: EvaluationInput, rules: readonly Rule[]): Evalua
   };
 }
 
-/** The USD ceiling of the Simplified Trade Regime rule, read from rule data, never hard-coded. */
-export function strThresholdUsd(rules: readonly Rule[]): number | null {
-  const str = rules.find(
+export interface ThresholdScope {
+  from?: CountryCode;
+  to?: CountryCode;
+  borderId?: string;
+  asOf?: string;
+}
+
+/**
+ * The USD ceiling of the Simplified Trade Regime rule, read from rule data, never hard-coded.
+ * Deterministically scoped to the route, border, and date when provided.
+ */
+export function strThresholdUsd(
+  rules: readonly Rule[],
+  scope?: ThresholdScope,
+): number | null {
+  const asOf = scope?.asOf ?? new Date().toISOString().slice(0, 10);
+  const matching = rules.filter(
+    (r) =>
+      r.status === "active" &&
+      r.outcome.verdict === "likely_str_eligible" &&
+      r.effectiveFrom <= asOf &&
+      (!scope?.from || r.conditions.from === scope.from) &&
+      (!scope?.to || r.conditions.to === scope.to) &&
+      (!scope?.borderId || !r.conditions.borderIds || r.conditions.borderIds.includes(scope.borderId)),
+  );
+
+  const candidates = matching.length > 0 ? matching : rules.filter(
     (r) => r.status === "active" && r.outcome.verdict === "likely_str_eligible",
   );
-  return str?.conditions.valueUsdUpTo ?? null;
+
+  if (candidates.length === 0) return null;
+
+  const winner = [...candidates].sort(
+    (a, b) =>
+      b.priority - a.priority ||
+      b.effectiveFrom.localeCompare(a.effectiveFrom) ||
+      b.version - a.version ||
+      a.id.localeCompare(b.id),
+  )[0];
+
+  return winner?.conditions.valueUsdUpTo ?? null;
 }

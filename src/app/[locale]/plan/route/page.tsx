@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Field, controlClass } from "@/components/ui/field";
 import { OptionRow } from "@/components/ui/option-row";
 import { getPathname } from "@/i18n/navigation";
-import { repository } from "@/lib/data";
+import { listBorders } from "@/lib/data/backend";
 import { parsePlanInput } from "@/lib/plan/params";
 
 type Props = {
@@ -26,7 +26,7 @@ export default async function RoutePage({ params, searchParams }: Props) {
   setRequestLocale(locale);
   const t = await getTranslations();
   const input = parsePlanInput(await searchParams);
-  const borders = await repository.listBorders();
+  const borders = await listBorders();
   const selected = borders.find((b) => b.id === input.borderId) ?? borders[0];
 
   return (

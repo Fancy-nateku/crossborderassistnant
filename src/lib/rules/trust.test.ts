@@ -8,7 +8,7 @@ const source = (status: Source["status"]): Source => ({
   name: status,
   url: null,
   publishedAt: null,
-  lastVerifiedAt: null,
+  lastVerifiedAt: status === "verified" ? "2026-10-15" : null,
   status,
 });
 
@@ -19,6 +19,16 @@ describe("deriveTrustState", () => {
 
   it("is verified only when every source is verified", () => {
     expect(deriveTrustState([source("verified"), source("verified")])).toBe("verified");
+  });
+
+  it("does not treat a verified label without a verification date as verified", () => {
+    expect(deriveTrustState([{ ...source("verified"), lastVerifiedAt: null }])).toBe("unverified");
+  });
+
+  it("treats a source verified in the future as unverified", () => {
+    expect(
+      deriveTrustState([source("verified")], { asOf: "2026-10-10", maxAgeDays: 365 }),
+    ).toBe("unverified");
   });
 
   it("lets the worst state win: conflicting over unverified over verified", () => {

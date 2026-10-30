@@ -39,6 +39,8 @@ export interface Source {
   publishedAt: string | null;
   lastVerifiedAt: string | null;
   status: SourceStatus;
+  verifiedBy?: string | null;
+  notes?: string | null;
 }
 
 export interface Requirement {
@@ -74,13 +76,17 @@ export interface Rule {
   status: "active" | "draft" | "retired";
   /** Higher wins when more than one rule matches. */
   priority: number;
+  verifiedAt?: string | null;
+  verifiedBy?: string | null;
 }
 
 export interface ExchangeRate {
+  id?: string;
   currency: Currency;
   ratePerUsd: number;
   /** ISO date (YYYY-MM-DD) the team set this rate. Never a live feed. */
   setAt: string;
+  setBy?: string | null;
   /** True for prototype fixtures. Real rates are set by an admin. */
   illustrative: boolean;
 }
@@ -99,12 +105,18 @@ export interface PlanInput {
 
 export interface SavedPlan {
   id: string;
+  userId?: string;
   input: PlanInput;
   doneCount: number;
   totalCount: number;
   /** ISO date (YYYY-MM-DD). */
   savedAt: string;
   ruleChanged: boolean;
+  verdict?: Verdict;
+  valueUsd?: number | null;
+  ruleId?: string | null;
+  ruleVersion?: number | null;
+  items?: ChecklistItemView[];
 }
 
 /** One rendered checklist row, already joined to its sources and trust state. */
@@ -117,4 +129,5 @@ export interface ChecklistItemView {
   trustState: TrustState;
   caveat: { subject: string | null; body: string } | null;
   sources: Source[];
+  done?: boolean;
 }

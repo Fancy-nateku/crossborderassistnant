@@ -30,7 +30,7 @@ If code, PRD and design disagree, flag it in the PR rather than silently picking
 - Next.js (App Router) + React + TypeScript (strict mode)
 - Tailwind CSS (no component library; our own small component set in `src/components/ui`)
 - Prisma ORM + managed PostgreSQL
-- Auth.js (login method — phone OTP vs email — is **not decided**; keep auth behind an interface)
+- Auth.js remains backend infrastructure for protected admin/saved-plan APIs; the trader-facing website has no sign-in or account flow.
 - `next-intl` for i18n from day one (English first, Swahili next)
 - Hosted on Vercel; GitHub for version control
 
@@ -70,7 +70,7 @@ Trust-state colours are separate from the brand and must stay visually distinct 
 
 ## Performance rules
 
-- **Server components by default.** Add `"use client"` only for: the trade-plan wizard, checklist ticking, and share buttons.
+- **Server components by default.** Add `"use client"` only where needed for the trade-plan wizard, local plan saving/listing, checklist ticking, and share buttons.
 - Keep client JS small. No heavy libraries (no moment, lodash full import, chart libs, animation libs) without team agreement.
 - Test pages on Chrome DevTools "Slow 3G" + 4× CPU throttle before opening a PR that changes a page.
 - Images: `next/image`, sized, lazy. Prefer SVG icons inline; no icon font.
@@ -100,7 +100,11 @@ Key fields the UI depends on:
 4. Value (KES or UGX in; USD shown with the dated rate)
 5. Rule check → one verdict: `likely_str_eligible`, `above_threshold`, `not_on_common_list`, `cannot_confirm`
 6. Checklist with sources, fees, trust states, disclaimer
-7. Save (sign-in requested only here) · Share to WhatsApp (`wa.me` link, plain text + source links)
+7. Save on this device without an account · Share to WhatsApp (`wa.me` link, plain text + source links)
+
+Saved plans and checklist ticks use this browser's local storage. They do not sync across
+devices, and clearing browser storage may remove them. Never send guest plans to protected
+backend saved-plan APIs.
 
 ## Suggested structure
 

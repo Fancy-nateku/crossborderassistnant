@@ -103,8 +103,8 @@ describe("buildChecklist (fixture requirements)", () => {
   it("keeps rule order and derives each trust state from its sources", () => {
     expect(items.map((i) => [i.requirementId, i.trustState])).toEqual([
       ["req-sco", "conflicting"],
-      ["req-scd", "verified"],
-      ["req-threshold", "verified"],
+      ["req-scd", "unverified"],
+      ["req-threshold", "unverified"],
       ["req-product", "unverified"],
     ]);
   });

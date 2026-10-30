@@ -9,7 +9,7 @@ import { controlClass } from "@/components/ui/field";
 import { SearchIcon } from "@/components/ui/icons";
 import { OptionRow } from "@/components/ui/option-row";
 import { Link, getPathname } from "@/i18n/navigation";
-import { repository } from "@/lib/data";
+import { getBorder, searchProducts } from "@/lib/data/backend";
 import { parsePlanInput, planToQuery } from "@/lib/plan/params";
 
 type Props = {
@@ -32,8 +32,8 @@ export default async function ProductPage({ params, searchParams }: Props) {
   const q = (Array.isArray(raw.q) ? raw.q[0] : raw.q)?.slice(0, 80) ?? "";
 
   const [border, products] = await Promise.all([
-    repository.getBorder(input.borderId),
-    repository.searchProducts(q),
+    getBorder(input.borderId),
+    searchProducts(q),
   ]);
 
   const skipQuery = planToQuery({ ...input, productId: null });
