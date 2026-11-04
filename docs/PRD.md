@@ -80,11 +80,11 @@ Start a plan (no sign-in)
   → Rule check → exactly one verdict:
        likely_str_eligible | above_threshold | not_on_common_list | cannot_confirm
   → Checklist with sources, fees, trust states, disclaimer
-       → Save plan (sign-in only if signed out) → Saved plans
+       → Save plan to this device → Saved plans
        → Share to WhatsApp
 ```
 
-Every verdict, including "Cannot confirm", leads to a checklist; the unknown case lists only the official contacts.
+Every verdict, including "Cannot confirm", leads to a checklist; when no verified contact is available, show a neutral message directing the trader to the relevant official border authority.
 
 | Screen | Purpose | Requirements |
 | --- | --- | --- |
@@ -94,8 +94,8 @@ Every verdict, including "Cannot confirm", leads to a checklist; the unknown cas
 | Wizard: value | KES or UGX in, USD shown with dated rate | FR-03 |
 | Result and checklist | Verdict, items, fees, sources, trust states, disclaimer | FR-04 to FR-07 |
 | Requirement detail | What it is, where to get it, official fee, source | FR-06 |
-| Sign in | Phone or email, decided after interviews | FR-01 |
-| Saved plans | List and reopen plans | FR-02, FR-08 |
+| Sign in | Not part of the trader-facing product | FR-01 |
+| Saved plans | Store locally, list and reopen on this device | FR-02, FR-08 |
 | Admin: rules and requirements | Edit rules; each change versioned | FR-09 |
 | Admin: source registry | Sources with verification dates and status | FR-10 |
 
@@ -105,17 +105,17 @@ FR-01 to FR-10 come from the brief; FR-11 to FR-14 are added from frontend resea
 
 | ID | User story | Acceptance criteria | Priority |
 | --- | --- | --- | --- |
-| FR-01 | As a trader I can create an account and sign in | Sign-in works; method (phone OTP or email) decided after interviews | Must |
-| FR-02 | As a trader I can save a trade plan | A plan persists and reopens with all inputs | Must |
+| FR-01 | As a trader I can use the website without an account | No sign-in, account creation, phone number, or email is required for the trader flow | Must |
+| FR-02 | As a trader I can save a trade plan | A plan is stored in this browser and reopens with all inputs; it does not sync across devices | Must |
 | FR-03 | As a trader I enter route, border, product and value | Each input group is one screen; value accepted in KES or UGX | Must |
 | FR-04 | The system evaluates configured rules | Same inputs always give the same verdict; rule version is recorded | Must |
 | FR-05 | The system generates a checklist from applicable requirements | Every item maps to a requirement record | Must |
 | FR-06 | I see the source of every important requirement | Source name, link and verification date visible per item | Must |
-| FR-07 | I can tick checklist items complete | Ticked state persists on saved plans | Must |
-| FR-08 | I can review saved plans | List shows route, product and date per plan | Must |
+| FR-07 | I can tick checklist items complete | Ticked state persists in this browser when the plan is saved | Must |
+| FR-08 | I can review saved plans | This browser lists saved plans with route, product and date; users can remove a plan | Must |
 | FR-09 | An admin manages rules and source metadata | Only admin role can edit; changes create a new rule version | Must |
 | FR-10 | The system records verification metadata | Each rule and source stores last-verified date and status | Must |
-| FR-11 | I can build a checklist without signing in | Sign-in is requested only on Save | Should |
+| FR-11 | I can build a checklist without signing in | Previewing and saving a plan require no account | Should |
 | FR-12 | I can find a product by its local name | Search matches synonyms in both countries | Should |
 | FR-13 | I can share my checklist to WhatsApp | Share sends a plain-text summary with source links | Should |
 | FR-14 | I can view saved plans with no connection | Previously opened plans render offline | Could, if interviews confirm signal loss |
@@ -131,7 +131,7 @@ FR-01 to FR-10 come from the brief; FR-11 to FR-14 are added from frontend resea
 | NFR-05 | Readability | Body text at least 16 px; high contrast for outdoor reading |
 | NFR-06 | Accessibility | WCAG 2.1 AA for contrast, labels and keyboard use |
 | NFR-07 | Offline | Saved plans cached as a PWA, conditional on FR-14 |
-| NFR-08 | Privacy | Collect only what a plan needs; no tracking scripts |
+| NFR-08 | Privacy | Collect only what a plan needs; no tracking scripts. Guest plans stay in browser storage and are not sent to an unauthenticated backend. |
 
 ## Trust and information-safety model
 
@@ -150,7 +150,7 @@ Backend owns the final schema; these are the fields the UI depends on.
 
 | Entity | Key fields |
 | --- | --- |
-| User | id, phone or email, role (trader, intermediary, admin), language |
+| User | id, optional phone or email, role (trader, intermediary, admin), language; user accounts are not required for the trader-facing flow |
 | TradePlan | id, userId (nullable until saved), route, borderId, productId, quantity, unit, valueLocal, currency, valueUsd, rateId, ruleVersion, verdict, createdAt |
 | Product | id, officialName, localNames[], onCommonList (yes / no / unknown) |
 | Border | id, name, countries, active |
@@ -186,7 +186,7 @@ Phone browser ──HTTPS──▶ Next.js app on Vercel ──SQL──▶ Mana
 - [ ] What phones and data budgets do traders actually have?
 - [ ] Is signal unreliable at Busia, making offline saved plans necessary?
 - [ ] Which language do traders prefer for reading instructions?
-- [ ] Do traders use email, or is phone-number login required?
+- [ ] Can traders reliably access this website and their browser-local plans on the devices available to them?
 - [ ] Have traders used Sauti, and what does it fail to do for them?
 - [ ] Who helps traders fill in border forms, and would those intermediaries use a web app?
 - [ ] Is the primary user the trader or the intermediary?

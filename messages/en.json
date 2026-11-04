@@ -90,7 +90,7 @@
     "usdEmpty": "Enter a value to see dollars.",
     "usdRate": "{rate} {currency} per dollar, set {date}. Customs may use a different rate.",
     "usdRateIllustrative": "Example rate for the prototype.",
-    "usdNoRate": "No rate for {currency} yet, so we can't convert. Ask the Trade Information Desk.",
+    "usdNoRate": "No rate for {currency} yet, so we can't convert. Check with the relevant official border authority.",
     "threshold": "Up to USD {amount} per crossing may use the Simplified Trade Regime, if your goods are on the Common List.",
     "errorQuantity": "Enter a quantity.",
     "errorValue": "Enter a value.",
@@ -105,13 +105,17 @@
     "caveat": "Guidance only. Border officials decide.",
     "checklistTitle": "Your checklist",
     "progress": "{done} of {total} done",
-    "noChecklist": "No verified checklist for this case. Contact the desk below.",
+    "noChecklist": "No verified checklist for this case. Check with the relevant official border authority.",
     "save": "Save plan",
     "share": "Share to WhatsApp",
-    "signInNote": "Sign in is only asked when you save.",
     "helpTitle": "Need help?",
-    "helpBody": "Ask the Trade Information Desk at {border}. {contact}",
-    "helpNoContact": "Ask the Trade Information Desk at {border}."
+    "helpNoContact": "Contact details are not available here. Please check with the relevant official border authority.",
+    "savedSuccess": "Plan saved on this device.",
+    "storedOnDevice": "Saved plans stay on this device and do not sync across devices.",
+    "deviceStorageLimit": "Clearing this browser's storage may remove saved plans.",
+    "storageUnavailable": "This browser could not store your plan. Check device storage settings and try again.",
+    "storageOutdated": "Saved-plan data from an older version cannot be read. You can start a new plan.",
+    "viewSaved": "View in Saved Plans"
   },
   "verdict": {
     "likely_str_eligible": "Likely eligible for the Simplified Trade Regime",
@@ -157,7 +161,12 @@
     "done": "{done} of {total} done",
     "notStarted": "Not started",
     "saved": "Saved {date}",
-    "ruleChanged": "A rule changed since you saved this. Open to see what's new.",
+    "deviceNote": "Plans are stored only on this device and do not sync across devices. Clearing browser storage may remove them.",
+    "loading": "Loading plans saved on this device...",
+    "delete": "Remove plan",
+    "deleteConfirm": "Remove this saved plan from this device?",
+    "storageUnavailable": "Saved plans could not be read from this device. Check browser storage settings and try again.",
+    "storageOutdated": "Saved-plan data from an older version cannot be read on this device.",
     "empty": "No saved plans yet.",
     "emptyCta": "Build your trade plan",
     "newPlan": "Build a new plan"
@@ -208,8 +217,8 @@
     "trust": {
       "verified": "Checked against its source.",
       "unverified": "Has a source, but not checked recently.",
-      "conflicting": "Sources say different things. Ask the desk.",
-      "unknown": "No source. Ask the desk."
+      "conflicting": "Sources say different things. Check with the relevant official border authority.",
+      "unknown": "No source. Check with the relevant official border authority."
     },
     "cta": "Start a plan"
   },
@@ -234,7 +243,7 @@
     "items": [
       {
         "q": "Do I need an account?",
-        "a": "No. Only to save a plan."
+        "a": "No. You can build and save plans without an account. Saved plans stay on this device and do not sync across devices."
       },
       {
         "q": "Is this official clearance?",
@@ -258,5 +267,10 @@
       }
     ],
     "cta": "Start a plan"
+  },
+  "error": {
+    "message": "The service is temporarily unavailable. Check your connection and try again.",
+    "tryAgain": "Try again",
+    "home": "Go to home"
   }
 }

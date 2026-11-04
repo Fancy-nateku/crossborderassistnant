@@ -1,0 +1,358 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  TRADER
+  INTERMEDIARY
+  ADMIN
+}
+
+enum CommonListStatus {
+  YES
+  NO
+  UNKNOWN
+}
+
+enum TrustState {
+  VERIFIED
+  UNVERIFIED
+  CONFLICTING
+  UNKNOWN
+}
+
+enum SourceStatus {
+  VERIFIED
+  UNVERIFIED
+  CONFLICTING
+}
+
+enum RuleStatus {
+  ACTIVE
+  DRAFT
+  RETIRED
+}
+
+enum CountryCode {
+  KE
+  UG
+}
+
+enum Currency {
+  KES
+  UGX
+}
+
+enum Unit {
+  BAGS
+  KILOGRAMS
+  CRATES
+}
+
+enum Verdict {
+  LIKELY_STR_ELIGIBLE
+  ABOVE_THRESHOLD
+  NOT_ON_COMMON_LIST
+  CANNOT_CONFIRM
+}
+
+model User {
+  id            String      @id @default(cuid())
+  name          String?
+  email         String?     @unique
+  emailVerified DateTime?
+  phone         String?     @unique
+  phoneVerified DateTime?
+  passwordHash  String?
+  image         String?
+  role          UserRole    @default(TRADER)
+  language      String      @default("en")
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  tradePlans    TradePlan[]
+  auditLogs     AuditLog[]
+
+  @@index([role])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Border {
+  id          String      @id
+  name        String
+  countryFrom CountryCode
+  countryTo   CountryCode
+  note        String?
+  active      Boolean     @default(true)
+  deskContact String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  ruleBorders RuleBorder[]
+  sources     BorderSource[]
+
+  @@index([active])
+  @@index([countryFrom, countryTo])
+}
+
+model Product {
+  id           String           @id
+  officialName String
+  onCommonList CommonListStatus @default(UNKNOWN)
+  description  String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  localNames ProductLocalName[]
+
+  @@index([officialName])
+  @@index([onCommonList])
+}
+
+model ProductLocalName {
+  id        String   @id @default(cuid())
+  productId String
+  name      String
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([name])
+  @@index([productId])
+}
+
+model Source {
+  id             String       @id
+  name           String
+  url            String?
+  publishedAt    String?
+  lastVerifiedAt String?
+  status         SourceStatus @default(UNVERIFIED)
+  verifiedBy     String?
+  notes          String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  requirements RequirementSource[]
+  rules        Rule[]
+  borders      BorderSource[]
+
+  @@index([status])
+}
+
+model Requirement {
+  id               String   @id
+  title            String
+  plainExplanation String   @db.Text
+  officialFee      String?
+  whereToObtain    String?
+  caveatSubject    String?
+  caveatBody       String?  @db.Text
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  sources RequirementSource[]
+  rules   RuleRequirement[]
+}
+
+model RequirementSource {
+  requirementId String
+  sourceId      String
+  displayOrder  Int    @default(0)
+
+  requirement Requirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+  source      Source      @relation(fields: [sourceId], references: [id], onDelete: Restrict)
+
+  @@id([requirementId, sourceId])
+  @@index([sourceId])
+}
+
+model BorderSource {
+  borderId     String
+  sourceId     String
+  note         String   @db.Text
+  displayOrder Int      @default(0)
+
+  border Border @relation(fields: [borderId], references: [id], onDelete: Cascade)
+  source Source @relation(fields: [sourceId], references: [id], onDelete: Restrict)
+
+  @@id([borderId, sourceId])
+  @@index([sourceId])
+}
+
+model Rule {
+  id             String           @id
+  version        Int              @default(1)
+  countryFrom    CountryCode
+  countryTo      CountryCode
+  commonList     CommonListStatus?
+  valueUsdAbove  Float?
+  valueUsdUpTo   Float?
+  verdict        Verdict
+  sourceId       String
+  effectiveFrom  String
+  status         RuleStatus       @default(ACTIVE)
+  priority       Int              @default(0)
+  verifiedAt     String?
+  verifiedBy     String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  source       Source            @relation(fields: [sourceId], references: [id], onDelete: Restrict)
+  borders      RuleBorder[]
+  requirements RuleRequirement[]
+
+  @@unique([id, version])
+  @@index([status, effectiveFrom, priority])
+  @@index([countryFrom, countryTo])
+}
+
+model RuleBorder {
+  ruleId      String
+  ruleVersion Int
+  borderId    String
+
+  rule   Rule   @relation(fields: [ruleId, ruleVersion], references: [id, version], onDelete: Cascade)
+  border Border @relation(fields: [borderId], references: [id], onDelete: Restrict)
+
+  @@id([ruleId, ruleVersion, borderId])
+  @@index([borderId])
+}
+
+model RuleRequirement {
+  ruleId        String
+  ruleVersion   Int
+  requirementId String
+  displayOrder  Int
+
+  rule        Rule        @relation(fields: [ruleId, ruleVersion], references: [id, version], onDelete: Cascade)
+  requirement Requirement @relation(fields: [requirementId], references: [id], onDelete: Restrict)
+
+  @@id([ruleId, ruleVersion, requirementId])
+  @@index([requirementId])
+}
+
+model ExchangeRate {
+  id           String   @id @default(cuid())
+  currency     Currency
+  ratePerUsd   Float
+  setAt        String
+  setBy        String
+  illustrative Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  @@index([currency, setAt])
+}
+
+model TradePlan {
+  id           String      @id @default(cuid())
+  userId       String
+  countryFrom  CountryCode
+  countryTo    CountryCode
+  borderId     String
+  productId    String?
+  quantity     Int?
+  unit         Unit        @default(BAGS)
+  valueLocal   Int?
+  currency     Currency    @default(KES)
+  valueUsd     Float?
+  rateId       String?
+  rateSnapshot String      @db.Text
+  ruleId       String?
+  ruleVersion  Int?
+  verdict      Verdict
+  asOf         String
+  ruleChanged  Boolean     @default(false)
+  doneCount    Int         @default(0)
+  totalCount   Int         @default(0)
+  savedAt      DateTime    @default(now())
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  checklistItems ChecklistItem[]
+
+  @@index([userId, savedAt])
+}
+
+model ChecklistItem {
+  id                       String   @id @default(cuid())
+  planId                   String
+  requirementId            String
+  displayOrder             Int
+  done                     Boolean  @default(false)
+  titleSnapshot            String
+  plainExplanationSnapshot String   @db.Text
+  officialFeeSnapshot      String?
+  whereToObtainSnapshot    String?
+  trustStateSnapshot       String
+  caveatSnapshot           String?  @db.Text
+  sourcesSnapshot          String   @db.Text
+  updatedAt                DateTime @updatedAt
+
+  plan TradePlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@unique([planId, requirementId])
+  @@index([planId, displayOrder])
+}
+
+model AuditLog {
+  id         String    @id @default(cuid())
+  actorId    String?
+  actorRole  UserRole
+  action     String
+  entityType String
+  entityId   String
+  details    String    @db.Text
+  createdAt  DateTime  @default(now())
+
+  actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId])
+  @@index([actorId, createdAt])
+}

@@ -1,10 +1,15 @@
-import { fireEvent, screen, within } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { fireEvent, screen, waitFor, within } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { messages, metadataTitle, redirectTarget, renderScreen } from "@/test/screen";
+import { readDevicePlanStore } from "@/lib/plan/device-plans";
 import ResultPage, { generateMetadata } from "./page";
 
 vi.mock("next-intl/server", () => import("@/test/mocks/intl-server"));
 vi.mock("@/i18n/navigation", () => import("@/test/mocks/navigation"));
+
+beforeEach(() => {
+  window.localStorage.clear();
+});
 
 /** A complete plan. KES 30,000 at the fixture rate of 130 is USD 230.77, under the ceiling. */
 const ELIGIBLE = {
@@ -133,11 +138,11 @@ describe("result screen — checklist", () => {
     expect(productItem).toHaveTextContent("Confirm with [authority] before you travel.");
   });
 
-  it("marks a fully sourced item verified and cites its source", async () => {
+  it("marks an item with no check date unverified and cites its source", async () => {
     await renderScreen(ResultPage, ELIGIBLE);
 
     const scd = checklistItems()[1];
-    expect(within(scd).getByText(messages.trust.badge.verified)).toBeInTheDocument();
+    expect(within(scd).getByText(messages.trust.callout.unverified)).toBeInTheDocument();
     expect(scd).toHaveTextContent("[Source name]");
   });
 
@@ -155,8 +160,8 @@ describe("result screen — checklist", () => {
     expect(scd).toHaveTextContent("Where: [office at Busia]");
   });
 
-  it("counts ticked items as the trader works through them", async () => {
-    await renderScreen(ResultPage, ELIGIBLE);
+  it("persists checklist ticks when the trader reopens the plan", async () => {
+    const { unmount } = await renderScreen(ResultPage, ELIGIBLE);
 
     expect(screen.getByText("0 of 4 done")).toBeInTheDocument();
 
@@ -166,8 +171,10 @@ describe("result screen — checklist", () => {
     expect(boxes[0]).toBeChecked();
     expect(screen.getByText("1 of 4 done")).toBeInTheDocument();
 
-    fireEvent.click(boxes[0]);
-    expect(screen.getByText("0 of 4 done")).toBeInTheDocument();
+    unmount();
+    await renderScreen(ResultPage, ELIGIBLE);
+    await waitFor(() => expect(screen.getAllByRole("checkbox")[0]).toBeChecked());
+    expect(screen.getByText("1 of 4 done")).toBeInTheDocument();
   });
 });
 
@@ -185,14 +192,17 @@ describe("result screen — disclaimer, actions and help", () => {
     }
   });
 
-  it("offers save and asks for sign-in only there", async () => {
+  it("saves a plan locally without asking the trader to sign in", async () => {
     await renderScreen(ResultPage, ELIGIBLE);
 
-    expect(screen.getByRole("link", { name: messages.result.save })).toHaveAttribute(
-      "href",
-      "/plans",
+    expect(screen.getByRole("button", { name: messages.result.save })).toBeInTheDocument();
+    expect(screen.getByText(messages.result.storedOnDevice)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: messages.result.save }));
+
+    await waitFor(() =>
+      expect(screen.getByText(messages.result.savedSuccess)).toBeInTheDocument(),
     );
-    expect(screen.getByText(messages.result.signInNote)).toBeInTheDocument();
+    expect(readDevicePlanStore().plans).toHaveLength(1);
   });
 
   it("shares to WhatsApp as plain text with the verdict, the items and their sources", async () => {
@@ -216,9 +226,7 @@ describe("result screen — disclaimer, actions and help", () => {
     await renderScreen(ResultPage, { ...ELIGIBLE, border: "malaba" });
 
     expect(screen.getByRole("heading", { name: messages.result.helpTitle })).toBeInTheDocument();
-    expect(
-      screen.getByText("Ask the Trade Information Desk at Malaba. [Desk contact details]"),
-    ).toBeInTheDocument();
+    expect(screen.getByText(messages.result.helpNoContact)).toBeInTheDocument();
   });
 
   it("goes back to the value step with the plan intact", async () => {

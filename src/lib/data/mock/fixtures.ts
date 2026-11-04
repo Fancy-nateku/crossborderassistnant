@@ -1,7 +1,6 @@
 // PROTOTYPE FIXTURES. Copied from the design canvas "Core Flow v0.1".
 // Common List statuses, fees and sources here are ILLUSTRATIVE. Real values come only
-// from the verified source registry (CLAUDE.md rule 1). Text in [square brackets]
-// marks data we do not have yet and is shown to the user as-is.
+// from the verified source registry (CLAUDE.md rule 1).
 
 import type {
   Border,
@@ -20,7 +19,7 @@ export const borders: Border[] = [
     countries: ["KE", "UG"],
     note: "One-stop border post",
     active: true,
-    deskContact: "[Desk contact details]",
+    deskContact: null,
   },
   {
     id: "malaba",
@@ -28,7 +27,7 @@ export const borders: Border[] = [
     countries: ["KE", "UG"],
     note: null,
     active: true,
-    deskContact: "[Desk contact details]",
+    deskContact: null,
   },
 ];
 

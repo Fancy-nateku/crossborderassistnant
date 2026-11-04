@@ -6,11 +6,13 @@ import { SiteHeader } from "@/components/site/site-header";
 import { TrustBadge } from "@/components/trust/trust-badge";
 import { LinkButton } from "@/components/ui/button";
 import { Container, PageShell } from "@/components/ui/container";
-import { repository } from "@/lib/data";
+import { getBorder } from "@/lib/data/backend";
 import { DEFAULT_BORDER_ID } from "@/lib/plan/params";
 
 const STEPS = ["route", "goods", "value"] as const;
 const TRUST_BADGES = ["verified", "unverified", "conflicting", "unknown"] as const;
+
+export const dynamic = "force-dynamic";
 
 export default async function LandingPage({
   params,
@@ -20,7 +22,7 @@ export default async function LandingPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations();
-  const border = await repository.getBorder(DEFAULT_BORDER_ID);
+  const border = await getBorder(DEFAULT_BORDER_ID);
 
   return (
     <PageShell>

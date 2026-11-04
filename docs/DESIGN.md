@@ -122,7 +122,7 @@ Verdict copy by outcome:
 | `not_on_common_list` | This product is not on the Common List |
 | `cannot_confirm` | We can't confirm the rules for this trade |
 
-For `cannot_confirm`, the heading uses `ink` (not `brand`) and the checklist shows only official contacts.
+For `cannot_confirm`, the heading uses `ink` (not `brand`). When no verified contact is available, show a plain message directing the trader to the relevant official border authority; never show placeholder contact details.
 
 ### Checklist item
 White card, 1 px `line`, 16 px padding, 10 px internal gap.
@@ -135,7 +135,7 @@ White card, 1 px `line`, 16 px padding, 10 px internal gap.
 5. Progress count in the section header: "N of M done", 15 px `ink-muted`.
 
 ### Help panel
-`unknown` background, 8 px radius, 16 px padding. Title "Not sure about something?" 16 px/700; body names the Trade Information Desk at the selected border plus its contact details.
+`unknown` background, 8 px radius, 16 px padding. Title "Not sure about something?" 16 px/700; body directs the trader to the relevant official border authority when verified contact details are unavailable.
 
 ### Disclaimer
 13 px `ink-muted`, at the end of every result page and the landing page:
@@ -148,16 +148,16 @@ White card, 1 px `line`, 16 px padding, 10 px internal gap.
 
 | # | Screen | Route | Key content |
 | --- | --- | --- | --- |
-| 1 | Landing | `/[locale]` | Header with wordmark + language button. White hero: h1 "Know what you need before you reach the border.", one paragraph, route strip at 0%, primary "Build your trade plan", note "No account needed to see your checklist." Then "Three questions, one checklist" numbered list (route, goods, value), trust-badge explainer card, secondary "Open saved plans", disclaimer. |
+| 1 | Landing | `/[locale]` | Header with wordmark + language button. White hero: h1 "Know what you need before you reach the border.", one paragraph, route strip at 0%, primary "Build your trade plan", note "No account needed to build or save a plan. Plans stay on this device." Then "Three questions, one checklist" numbered list (route, goods, value), trust-badge explainer card, secondary "Open saved plans", disclaimer. |
 | 2 | Route and border | `/[locale]/plan/route` | h1 "Where are you taking your goods?" From/To selects (Kenya / Uganda). Fieldset "Which crossing?": Busia (selected, "One-stop border post"), Malaba, dashed "Other crossings — not covered yet" row. Footer: "Next: your goods". |
 | 3 | Product | `/[locale]/plan/product` | h1 "What are you taking?" Search "Search by any name you use". Result count. Product option rows with local name and Common List badge. Escape link "Can't find it? Continue without a match". Footer: "Next: value". |
 | 4 | Value | `/[locale]/plan/value` | h1 "How much are you taking, and what is it worth?" Quantity + unit (Bags, Kilograms, Crates). Currency/value group. USD conversion panel showing amount, rate and the date the team set it, with "Customs may use a different rate." Neutral `muted` note about the USD 2,000 STR threshold. Footer: "See my checklist". |
-| 5 | Verdict and checklist | `/[locale]/plan/result` | Verdict card, "Your checklist" with items and trust states, primary "Save plan", secondary "Share to WhatsApp", note "You will be asked to sign in when you save.", help panel, disclaimer. |
+| 5 | Verdict and checklist | `/[locale]/plan/result` | Verdict card, "Your checklist" with items and trust states, primary "Save plan", secondary "Share to WhatsApp", note that plans stay on this device and do not sync, help panel, disclaimer. |
 | 6 | Saved plans | `/[locale]/plans` | Header with wordmark + signed-in identifier. h1 "Saved plans", plan cards, footer "Build a new plan". Empty state: "No saved plans yet." + primary "Build your trade plan". |
 
 Added in code, not yet designed (need design review): **How it works** (`/how-it-works`), **About** (`/about`), **Help** (`/help`, short FAQ), the site header and footer, and the phone bottom tab bar.
 
-Not yet designed (build plainly with the same components, then bring to design review): Sign in, Requirement detail, Admin rules, Admin source registry.
+Not yet designed (build plainly with the same components, then bring to design review): Requirement detail, Admin rules, Admin source registry. Trader sign-in is out of scope; saved plans are stored on the current device.
 
 ## 6. Copy rules
 

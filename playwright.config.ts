@@ -40,10 +40,18 @@ export default defineConfig({
 
   // A production build, so what is measured is what a trader would be served.
   // Port 3100, so it does not collide with a dev server on the usual 3000.
-  webServer: {
-    command: "npm run start -- --port 3100",
-    url: "http://127.0.0.1:3100/en",
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-  },
+  webServer: [
+    {
+      command: "npm run start:backend",
+      url: "http://127.0.0.1:4000/health",
+      reuseExistingServer: !process.env.CI,
+      timeout: 120_000,
+    },
+    {
+      command: "npm run start -- --port 3100",
+      url: "http://127.0.0.1:3100/en",
+      reuseExistingServer: !process.env.CI,
+      timeout: 120_000,
+    },
+  ],
 });

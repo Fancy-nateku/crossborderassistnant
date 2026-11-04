@@ -299,3 +299,51 @@ Still open:
 - Hover and pressed states, and the non-text contrast of the ring itself (1.4.11), as noted
   in the entry above.
 
+## 2026-10-29 Express API foundation
+
+Added a separate Express service at `backend/` with public reference-data and preview
+endpoints, request validation, request IDs, error envelopes, CORS allowlisting, security
+headers, body-size limits and process-local rate limits. It uses the existing root Prisma
+schema and migrations rather than maintaining a second schema copy. The API contract is
+`backend/openapi.yaml`; setup and limitations are in `backend/README.md`.
+
+This architecture differs from the PRD's original Next.js Route Handler backend diagram.
+The initial Express foundation was not wired into the frontend. A server-only Next.js
+adapter now reads borders, products, rates, thresholds, previews and saved plans from
+Express; same-origin reference, preview, saved-plan and admin handlers proxy requests to
+it. Phone OTP is implemented with Twilio Verify, including verification, rate limiting,
+user creation and saving the pending plan after sign-in. Admin writes and audit reads are
+implemented in Express with role checks and transactional audit records.
+
+For data honesty, the local Prisma seed now requires an explicit opt-in and a localhost
+database, cannot run in production, creates no fixed demo identities or desk contacts,
+marks products unknown and sources unverified, keeps the sample rule in draft, and retains
+the sample rates as illustrative. The approved source and rate freshness windows are both
+30 days. No trade-data source was independently re-verified in this work.
+
+The existing Auth.js credentials shortcut was removed because it accepted arbitrary
+identifiers and inferred roles from their text. Auth now issues sessions only after
+Twilio Verify approves an E.164 phone number. The plan being saved is held in tab-scoped
+session storage during sign-in, not added to a URL. Sources without a verification date
+are shown as unverified, not verified.
+
+The feature branch `feat/frontend-core-flow` is an ancestor of `feature/backend`, so its
+commits are already included. No merge was performed. The configured local PostgreSQL
+server was not running or reachable during validation; database migrations, live SMS and
+real database/browser walkthrough remain unverified until local services and Twilio
+credentials are configured.
+
+## Guest-only plans and Busia reference provenance
+
+The trader-facing flow no longer offers account creation, sign-in, phone/OTP, password,
+Google, or password-recovery screens/routes. A trader can preview and save without an
+account. Saved plan inputs and checklist ticks live only in versioned browser local
+storage; they do not sync across devices and clearing browser storage may remove them.
+The frontend does not send guest plans to the backend. Protected backend saved-plan and
+admin APIs and their authorization remain in place for future approved use.
+
+The result help panel shows no phone number or unverified contact; it directs traders to
+the relevant official border authority. The isolated Busia reference seed links the KRA,
+URA, and EAC sources only as evidence for Busia OSBP existence, name, and country pairing.
+It does not establish a product-specific customs rule and does not add fees, contacts,
+thresholds, exchange rates, documents, or trade claims.

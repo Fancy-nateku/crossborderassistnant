@@ -5,11 +5,10 @@ import { ROUTE_PROGRESS } from "@/components/plan/route-strip";
 import { VALUE_FORM_ID, ValueForm } from "@/components/plan/value-form";
 import { WizardShell } from "@/components/plan/wizard-shell";
 import { Button } from "@/components/ui/button";
-import { repository } from "@/lib/data";
+import { getBorder, getExchangeRate, getStrThreshold } from "@/lib/data/backend";
 import type { Currency, ExchangeRate } from "@/lib/domain";
 import { formatNumber } from "@/lib/format";
 import { parsePlanInput, planToQuery } from "@/lib/plan/params";
-import { strThresholdUsd } from "@/lib/rules/evaluate";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -28,16 +27,15 @@ export default async function ValuePage({ params, searchParams }: Props) {
   const t = await getTranslations();
   const input = parsePlanInput(await searchParams);
 
-  const [border, kes, ugx, rules] = await Promise.all([
-    repository.getBorder(input.borderId),
-    repository.getExchangeRate("KES"),
-    repository.getExchangeRate("UGX"),
-    repository.listActiveRules(),
+  const [border, kes, ugx, { threshold }] = await Promise.all([
+    getBorder(input.borderId),
+    getExchangeRate("KES"),
+    getExchangeRate("UGX"),
+    getStrThreshold(input),
   ]);
   if (!border) redirect({ href: "/plan/route", locale });
 
   const rates: Record<Currency, ExchangeRate | null> = { KES: kes, UGX: ugx };
-  const threshold = strThresholdUsd(rules);
 
   return (
     <WizardShell
