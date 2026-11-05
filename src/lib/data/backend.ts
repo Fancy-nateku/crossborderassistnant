@@ -148,7 +148,11 @@ export async function getStrThreshold(input: Pick<PlanInput, "from" | "to" | "bo
     const rules = await repository.listActiveRules();
     return { threshold: strThresholdUsd(rules, input) };
   }
-  const params = new URLSearchParams(input);
+  const params = new URLSearchParams({
+  from: input.from,
+  to: input.to,
+  borderId: input.borderId,
+});
   return requestBackendData(
     `/api/v1/thresholds/str?${params}`,
     z.object({ threshold: z.number().nullable() }),
