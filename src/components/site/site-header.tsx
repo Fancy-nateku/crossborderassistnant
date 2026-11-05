@@ -1,4 +1,5 @@
 import { useTranslations } from "next-intl";
+import { AuthNav } from "@/components/auth/auth-nav";
 import { Container } from "@/components/ui/container";
 import { Link } from "@/i18n/navigation";
 import { navHref } from "./nav-config";
@@ -23,12 +24,15 @@ export function SiteHeader() {
           {t("app.name")}
         </Link>
 
-        <nav aria-label={t("nav.label")} className="hidden items-center gap-3 md:flex">
-          <NavLinks layout="row" />
-          <Link href={navHref("start")} className={startClass}>
-            {t("nav.start")}
-          </Link>
-        </nav>
+        <div className="flex items-center gap-3">
+          <nav aria-label={t("nav.label")} className="hidden items-center gap-3 md:flex">
+            <NavLinks layout="row" />
+            <Link href={navHref("start")} className={startClass}>
+              {t("nav.start")}
+            </Link>
+          </nav>
+          <AuthNav />
+        </div>
       </Container>
     </header>
   );
