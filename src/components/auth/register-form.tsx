@@ -2,7 +2,6 @@
 
 import { useState, type FormEvent } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
@@ -13,7 +12,6 @@ const labelClass = "flex flex-col gap-1.5 font-bold";
 export function RegisterForm() {
   const t = useTranslations("auth");
   const locale = useLocale();
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -37,13 +35,12 @@ export function RegisterForm() {
       return;
     }
     const result = await signIn("credentials", { email, password, redirect: false });
-    setPending(false);
     if (!result || result.error) {
+      setPending(false);
       setError(t("errorGeneric"));
       return;
     }
-    router.push(`/${locale}/plans`);
-    router.refresh();
+    window.location.assign(new URL(`/${locale}/plans`, window.location.origin).href);
   }
 
   return (
