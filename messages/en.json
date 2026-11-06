@@ -17,6 +17,25 @@
     "errorTaken": "That email is already registered.",
     "errorGeneric": "Something went wrong. Please try again."
   },
+    "account": {
+    "title": "Saved to your account",
+    "loading": "Loading your saved plans…",
+    "empty": "No plans saved to your account yet.",
+    "loadError": "We could not load your saved plans. Please try again.",
+    "saveButton": "Save to my account",
+    "saved": "Saved to your account",
+    "viewSaved": "View saved plans",
+    "storedInAccount": "Saved plans stay with your account on any device.",
+    "saveFailed": "We could not save this plan. Please try again.",
+    "open": "Open",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this saved plan?",
+    "progress": "{done} of {total} steps done",
+    "verdictLikely": "The Simplified Trade Regime may apply. Confirm with the border authority.",
+    "verdictAbove": "Above the USD 2,000 limit. Standard procedures apply.",
+    "verdictNotListed": "This product is not on the Common List.",
+    "verdictUnconfirmed": "We could not confirm this. Check with the official authority."
+  },
   "app": {
     "name": "CrossBorder Assist",
     "description": "Know what documents and official fees apply to your goods before you reach the border."
