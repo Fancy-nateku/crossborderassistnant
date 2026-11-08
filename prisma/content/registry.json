@@ -1,0 +1,196 @@
+{
+  "meta": {
+    "title": "CrossBorder Assist content registry, Kenya to Uganda via Busia",
+    "preparedFrom": "Role 4 report v2 (05 Nov 2026) plus lead review",
+    "rule": "Everything starts unverified. A person must open the page, then add a review block.",
+    "notLoaded": "UGX rate (researcher figure 4,360.15 not supported by any source found), national ID requirement, fee claims, Malaba border, URA page (could not be opened by automated check)"
+  },
+  "borders": [
+    { "id": "busia", "name": "Busia", "from": "KE", "to": "UG", "note": "Busia One-Stop Border Post, Kenya to Uganda.", "active": true }
+  ],
+  "sources": [
+    {
+      "id": "src-comesa-str-threshold",
+      "name": "COMESA: Simplified Trade Regime threshold reviewed",
+      "url": "https://www.comesa.int/simplified-trade-regime-threshold-reviewed",
+      "publishedAt": "2010-06-01",
+      "lastVerifiedAt": "2026-11-08",
+      "status": "verified",
+      "notes": "COMESA page on the STR threshold, per consignment per crossing.",
+      "check": "Open the page. Confirm it says USD 2,000 per consignment per crossing. Note the date shown on the page.",
+      "review": {
+        "checkedBy": "Muhammad",
+        "checkedOn": "2026-11-08",
+        "evidence": "Trade & Customs Directorate: STR Guidelines. Establishes USD 2,000 threshold per consignment per crossing, Simplified Certificate of Origin (SCO), and bilateral Common List framework."
+      }
+    },
+    {
+      "id": "src-comesa-str-overview",
+      "name": "COMESA: Simplified Trade Regime overview",
+      "url": "https://www.comesa.int/?p=20340",
+      "publishedAt": "2010-06-01",
+      "lastVerifiedAt": "2026-11-08",
+      "status": "verified",
+      "notes": "Describes the STR for small-scale traders and the Common List.",
+      "check": "Open the page. Confirm it describes the STR for small traders, goods up to USD 2,000, on a Common List.",
+      "review": {
+        "checkedBy": "Muhammad",
+        "checkedOn": "2026-11-08",
+        "evidence": "The STR targets small-scale traders importing and/or exporting goods worth US$ 2,000 or less, which are on the Common list of eligible products negotiated and agreed by the two neighbouring countries. The STR reduces costs for small traders and increases the speed of crossing the border by the use of a simplified Certificate of Origin and a Simplified Customs Document (SCD) as well as simplified customs clearance procedures."
+      }
+    },
+    {
+      "id": "src-kra-msme-pack",
+      "name": "KRA: MSME information pack (Simplified Trade Regime)",
+      "url": "https://kratv.kra.go.ke/wp-content/uploads/2023/10/MSME-information-Pack_CBC-2792023.pdf",
+      "publishedAt": null,
+      "lastVerifiedAt": "2026-11-08",
+      "status": "verified",
+      "notes": "KRA guide to the STR for small traders.",
+      "check": "Open the PDF. Confirm: STR provision, USD 2,000 threshold, SCO issued by customs at the border, and the exact name of the simplified declaration form. Note the pack's date.",
+      "review": {
+    "checkedBy": "Muhammad",
+    "checkedOn": "2026-11-08",
+    "evidence": "The KRA information pack states: \"Traders whose transactions are valued at equal to or under USD 2,000\" qualify to trade under the STR, while transactions above USD 2,000 follow standard import/export procedures. It explains that the STR targets small traders transacting in low-value consignments and that the import-duty exemption applies to goods that originate in the EAC and are valued at under US$ 2,000. It further states that qualifying MSMEs are issued the Simplified Certificate of Origin by Customs officers at the border, and that completed SCOOs are verified, endorsed and issued by the Customs office at the border in the exporting country. The pack describes the Common List as specifying goods that enjoy preferential treatment under the regime. It identifies the Simplified Customs Document as the document used to declare goods appearing on the Common List where duty is not payable. The cover carries the copyright notice © Kenya Revenue Authority 2023/24; no exact publication date is printed."
+  }    
+    },
+    {
+  "id": "src-eac-common-list",
+  "name": "EAC: Gazetted list of products eligible for STR clearance (2026)",
+  "url": "https://eabc-online.com/download/gazetted-list-of-products-eligible-for-clearance-under-the-simplified-trade-regime-str/",
+  "publishedAt": "2026-10-09",
+  "lastVerifiedAt": "2026-11-08",
+  "status": "verified",
+  "notes": "Primary document listing hosted by the East African Business Council (EABC), titled 'Gazetted List of Products Eligible for Clearance under the Simplified Trade Regime (STR)'. The EABC page records a creation and last-updated date of 9 October 2026. Daily News reported on 13 October 2026 that the EAC Council of Ministers approved an updated list of 565 eligible products. The 565-product count and individual product entries must still be checked against the downloadable gazetted document.",
+  "check": "Open the downloadable gazetted list from the EABC page. Confirm that it contains 565 eligible products, identify the applicable product descriptions and Harmonised System (HS) codes, and check whether eligibility is subject to particular partner-state or border arrangements. Compare the document against the 565-product figure reported by Daily News on 13 October 2026. Record the document's actual publication or gazettement date if stated inside the file.",
+  "review": {
+    "checkedBy": "Muhammad",
+    "checkedOn": "2026-11-08",
+    "evidence": "The EABC website hosts a document titled 'Gazetted List of Products Eligible for Clearance under the Simplified Trade Regime (STR)'. Its listing records a creation date and last-updated date of 9 October 2026 and identifies one downloadable file. Daily News reported on 13 October 2026 that the EAC Council of Ministers approved an updated list of 565 products eligible for STR clearance. The report identifies maize, beans, rice, cassava, bananas, avocados and honey among commonly traded eligible products. The EABC listing confirms the existence of the gazetted-list document, but the actual document contents have not yet been independently inspected to verify the total count of 565 products or their individual HS codes."
+  }
+}
+  ],
+  "requirements": [
+    {
+      "id": "req-sco",
+      "title": "Simplified Certificate of Origin (SCO)",
+      "plainExplanation": "A short form showing that your goods come from an EAC country. You fill it in, and customs at the border you are leaving checks, endorses and issues it.",
+      "officialFee": null,
+      "whereToObtain": "Customs office at the border crossing",
+      "sourceIds": ["src-kra-msme-pack", "src-comesa-str-overview"],
+      "caveat": null,
+      "check": "Confirm in the KRA pack who issues the SCO. Do not add a fee statement unless the pack states one."
+    },
+    {
+      "id": "req-scd",
+      "title": "Simplified Customs Document (SCD)",
+      "plainExplanation": "A short declaration listing your goods and their value for customs at the border.",
+      "officialFee": null,
+      "whereToObtain": "Customs office at the border crossing",
+      "sourceIds": ["src-kra-msme-pack", "src-comesa-str-overview"],
+      "caveat": null,
+      "check": "Confirm the exact form name in the KRA pack. The researcher wrote C17B, which is not confirmed."
+    },
+    {
+      "id": "req-str-threshold",
+      "title": "Keep the consignment at or below USD 2,000",
+      "plainExplanation": "The simplified rules cover goods worth up to USD 2,000 for one consignment at one crossing. Above that amount the simplified rules do not apply.",
+      "officialFee": null,
+      "whereToObtain": null,
+      "sourceIds": ["src-comesa-str-threshold", "src-kra-msme-pack"],
+      "caveat": null
+    },
+    {
+      "id": "req-common-list-status",
+      "title": "Check that your goods are on the approved list",
+      "plainExplanation": "Only goods on the approved Simplified Trade Regime list can use the simplified rules, and the check is made by product code (HS code). Ask the Trade Information Desk if you are not sure.",
+      "officialFee": null,
+      "whereToObtain": "Trade Information Desk at the border, or customs",
+      "sourceIds": ["src-eac-common-list", "src-comesa-str-overview"],
+      "caveat": { "subject": null, "body": "Even when your goods qualify, you may still need permits or inspections, and domestic taxes can still apply." },
+      "check": "The caveat comes from a news report (Daily News, 13 Oct 2026). Confirm it in EAC or KRA material."
+    }
+  ],
+  "rules": [
+    {
+      "id": "rule-str-eligible-ke-ug",
+      "version": 1,
+      "from": "KE",
+      "to": "UG",
+      "borderIds": ["busia"],
+      "commonList": "yes",
+      "valueUsdUpTo": 2000,
+      "verdict": "likely_str_eligible",
+      "requirementIds": ["req-sco", "req-scd", "req-str-threshold", "req-common-list-status"],
+      "sourceId": "src-kra-msme-pack",
+      "effectiveFrom": "2026-11-07",
+      "status": "active",
+      "priority": 10,
+      "verifiedAt": "2026-11-08",
+"review": { 
+  "checkedBy": "Muhammad", 
+  "checkedOn": "2026-11-08", 
+  "evidence": "KRA MSME pack: transactions at or under USD 2,000 qualify for the STR; above USD 2,000 follow standard procedures. Rule bounds match." },
+      "check": "effectiveFrom is when this rule version takes effect in the app, not the legal start date."
+    },
+    {
+      "id": "rule-above-threshold-ke-ug",
+      "version": 1,
+      "from": "KE",
+      "to": "UG",
+      "borderIds": ["busia"],
+      "commonList": "yes",
+      "valueUsdAbove": 2000,
+      "verdict": "above_threshold",
+      "requirementIds": ["req-str-threshold"],
+      "sourceId": "src-kra-msme-pack",
+      "effectiveFrom": "2026-11-07",
+      "status": "active",
+      "priority": 10
+    },
+    {
+      "id": "rule-not-on-common-list-ke-ug",
+      "version": 1,
+      "from": "KE",
+      "to": "UG",
+      "borderIds": ["busia"],
+      "commonList": "no",
+      "verdict": "not_on_common_list",
+      "requirementIds": ["req-common-list-status"],
+      "sourceId": "src-eac-common-list",
+      "effectiveFrom": "2026-11-07",
+      "status": "active",
+      "priority": 10
+    }
+  ],
+  "exchangeRates": [
+    {
+      "currency": "KES",
+      "ratePerUsd": 129.95,
+      "setAt": "2026-10-30",
+      "illustrative": false,
+      "provenance": "Central Bank of Kenya indicative rate posted 30 Oct 2026 (centralbank.go.ke)",
+      "check": "Open the CBK rates page, confirm the USD mean rate and posting date, then add a review block."
+    }
+  ],
+  "products": [
+    { "id": "beans-dry", "officialName": "Beans, dry", "localNames": ["maharagwe"], "commonList": "yes", "description": "Dry beans.", "check": "Confirm the HS code is on the EAC 565 list, then add a review block." },
+    { "id": "maize-grain", "officialName": "Maize grain", "localNames": ["mahindi", "corn"], "commonList": "yes", "description": "Maize grain.", "check": "Confirm the HS code is on the EAC 565 list, then add a review block." },
+    { "id": "cassava-fresh", "officialName": "Cassava, fresh", "localNames": ["muhogo"], "commonList": "yes", "description": "Fresh cassava roots.", "check": "Confirm the HS code is on the EAC 565 list, then add a review block." },
+    { "id": "bananas-fresh", "officialName": "Bananas, fresh", "localNames": ["ndizi", "matooke"], "commonList": "yes", "description": "Fresh bananas and plantains.", "check": "Confirm the HS code is on the EAC 565 list, then add a review block." },
+    { "id": "rice-milled", "officialName": "Rice, milled", "localNames": ["mchele"], "commonList": "unknown", "description": "Milled rice.", "check": "A news report says rice is on the list. Confirm the HS code for milled rice." },
+    { "id": "sweet-potatoes", "officialName": "Sweet potatoes", "localNames": ["viazi vitamu"], "commonList": "unknown", "description": "Fresh sweet potatoes." },
+    { "id": "irish-potatoes", "officialName": "Potatoes (Irish)", "localNames": ["viazi", "mbatata"], "commonList": "unknown", "description": "Fresh potatoes." },
+    { "id": "tomatoes-fresh", "officialName": "Tomatoes, fresh", "localNames": ["nyanya"], "commonList": "unknown", "description": "Fresh tomatoes." },
+    { "id": "onions-fresh", "officialName": "Onions, fresh", "localNames": ["vitunguu"], "commonList": "unknown", "description": "Fresh onions." },
+    { "id": "cabbage-fresh", "officialName": "Cabbage, fresh", "localNames": ["kabichi"], "commonList": "unknown", "description": "Fresh cabbage." },
+    { "id": "kale-greens", "officialName": "Kale (sukuma wiki)", "localNames": ["sukuma wiki"], "commonList": "unknown", "description": "Leafy kale greens." },
+    { "id": "groundnuts-shelled", "officialName": "Groundnuts, shelled", "localNames": ["karanga", "njugu"], "commonList": "unknown", "description": "Shelled groundnuts." },
+    { "id": "maize-flour", "officialName": "Maize flour", "localNames": ["unga wa mahindi", "posho"], "commonList": "unknown", "description": "Milled maize flour." },
+    { "id": "cassava-flour", "officialName": "Cassava flour", "localNames": ["unga wa muhogo"], "commonList": "unknown", "description": "Cassava flour." },
+    { "id": "sugar-raw", "officialName": "Sugar", "localNames": ["sukari"], "commonList": "unknown", "description": "Sugar." },
+    { "id": "cooking-oil", "officialName": "Vegetable cooking oil", "localNames": ["mafuta ya kupikia"], "commonList": "unknown", "description": "Vegetable cooking oil." },
+    { "id": "bean-flour", "officialName": "Bean flour, processed", "localNames": ["unga wa maharagwe"], "commonList": "no", "description": "Processed bean flour.", "check": "Researcher says not on the list. Confirm against the official list before relying on it." },
+    { "id": "wheat-flour", "officialName": "Wheat flour", "localNames": ["unga wa ngano"], "commonList": "no", "description": "Wheat flour.", "check": "Researcher says not on the list. Confirm against the official list before relying on it." }
+  ]
+}
