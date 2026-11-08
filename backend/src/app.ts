@@ -381,6 +381,7 @@ const approvedSourceDomains = [
   "theigc.org",
   "eprcug.org",
   "ura.go.ug",
+  "eabc-online.com",
 ];
 function isApprovedSourceUrl(value: string | null | undefined): boolean {
   if (!value) return false;
