@@ -83,6 +83,7 @@ const requirementSchema = z
     officialFee: z.string().nullable().default(null),
     whereToObtain: z.string().nullable().default(null),
     sourceIds: z.array(idSchema).min(1),
+    review: reviewSchema.optional(),
     caveat: z
       .object({ subject: z.string().nullable(), body: z.string().min(1) })
       .strict()
@@ -119,6 +120,7 @@ const productSchema = z
     id: idSchema,
     officialName: z.string().min(1).max(255),
     localNames: z.array(z.string().min(1)).default([]),
+    hsCodes: z.array(z.string()).default([]),
     commonList: commonListSchema,
     description: z.string().nullable().default(null),
     review: reviewSchema.optional(),
