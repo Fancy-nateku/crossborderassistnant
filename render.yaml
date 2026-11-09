@@ -13,8 +13,8 @@ services:
     healthCheckPath: /health
     # prisma CLI is a devDependency, so install dev deps too.
     buildCommand: npm ci --include=dev && npm run build:backend
-    preDeployCommand: npx prisma migrate deploy --schema prisma/schema.prisma
-    startCommand: npm run start:backend
+    # Free tier has no preDeployCommand, so migrate on every start.
+    startCommand: npx prisma migrate deploy --schema prisma/schema.prisma && npm run start:backend
     envVars:
       - key: NODE_VERSION
         value: 20.20.2
