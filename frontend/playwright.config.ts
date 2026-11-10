@@ -42,7 +42,7 @@ export default defineConfig({
   // Port 3100, so it does not collide with a dev server on the usual 3000.
   webServer: [
     {
-      command: "npm run start:backend",
+      command: "npm --prefix ../backend run start",
       url: "http://127.0.0.1:4000/health",
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,

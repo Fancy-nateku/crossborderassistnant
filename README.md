@@ -18,7 +18,7 @@ npm run lint
 ```
 
 Node 20.9 or newer.
-Set `BACKEND_API_URL` in the root `.env` and configure `backend/.env` as described in
+Set `BACKEND_API_URL` in `frontend/.env` and configure `backend/.env` as described in
 [backend/README.md](./backend/README.md) before starting both services.
 
 ## Backend status
@@ -53,7 +53,7 @@ The linked sources support the existence, name, and Kenya–Uganda pairing of th
 only; they do not establish product-specific customs rules. The seed refuses to run in
 production or against a non-local database.
 
-`src/lib/data/mock/fixtures.ts` holds illustrative prototype fixtures. Common List statuses,
+`frontend/src/lib/data/mock/fixtures.ts` holds illustrative prototype fixtures. Common List statuses,
 fees, sources and exchange rates are not authoritative. Do not use these fixtures as
 trade advice. The Prisma demo seed is restricted to local databases and is never production
 content.
@@ -61,14 +61,14 @@ content.
 ## Layout
 
 ```
-src/app/[locale]/        landing, plan/{route,product,value,result}, plans
-src/components/ui/       Button, Field, OptionRow, icons
-src/components/trust/    TrustBadge, TrustCallout, SourceLine, VerdictCard, HelpPanel, Disclaimer
-src/components/plan/     RouteStrip, WizardShell, ValueForm, Checklist, device-local save/listing
-src/lib/rules/           pure rules engine, trust-state derivation, checklist builder
-src/lib/data/            Repository adapters, fixtures, and Express server client
-src/lib/api/              Same-origin API proxy and server-side backend client
-messages/en.json         every user-facing string
+frontend/src/app/[locale]/        landing, plan/{route,product,value,result}, plans
+frontend/src/components/ui/       Button, Field, OptionRow, icons
+frontend/src/components/trust/    TrustBadge, TrustCallout, SourceLine, VerdictCard, HelpPanel, Disclaimer
+frontend/src/components/plan/     RouteStrip, WizardShell, ValueForm, Checklist, device-local save/listing
+frontend/src/lib/rules/           pure rules engine, trust-state derivation, checklist builder
+frontend/src/lib/data/            Repository adapters, fixtures, and Express server client
+frontend/src/lib/api/              Same-origin API proxy and server-side backend client
+frontend/messages/en.json       every user-facing string
 ```
 
 Wizard state lives in the URL (plain GET forms), so each step works without client JavaScript. Client components: the value form and the checklist.

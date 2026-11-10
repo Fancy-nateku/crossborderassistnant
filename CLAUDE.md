@@ -28,7 +28,7 @@ If code, PRD and design disagree, flag it in the PR rather than silently picking
 ## Tech stack
 
 - Next.js (App Router) + React + TypeScript (strict mode)
-- Tailwind CSS (no component library; our own small component set in `src/components/ui`)
+- Tailwind CSS (no component library; our own small component set in `frontend/src/components/ui`)
 - Prisma ORM + managed PostgreSQL
 - Auth.js remains backend infrastructure for protected admin/saved-plan APIs; the trader-facing website has no sign-in or account flow.
 - `next-intl` for i18n from day one (English first, Swahili next)
@@ -78,7 +78,7 @@ Trust-state colours are separate from the brand and must stay visually distinct 
 
 ## i18n rules
 
-- No user-facing string literals in components. Every string goes through `next-intl` message files in `messages/{locale}.json`.
+- No user-facing string literals in components. Every string goes through `next-intl` message files in `frontend/messages/{locale}.json`.
 - Keep copy plain: short sentences, no legal jargon without a plain explanation.
 - Product search must support local-name synonyms (`Product.localNames[]`).
 
@@ -109,7 +109,7 @@ backend saved-plan APIs.
 ## Suggested structure
 
 ```
-src/
+frontend/src/   # the Next.js app lives in frontend/; the Express API in backend/; shared Prisma schema in prisma/
   app/
     [locale]/
       page.tsx                 # landing
@@ -147,7 +147,7 @@ prisma/
 - Component tests for trust states (React Testing Library).
 - Keep an expected-vs-actual record for the SOEN 370 test plan.
 - `npm test` runs the Vitest suite: rules, components and every screen. Screens are async
-  server components, so they render through the harness in `src/test/` (see `docs/log.md`).
+  server components, so they render through the harness in `frontend/src/test/` (see `docs/log.md`).
 - `npm run test:visual` runs every Playwright browser check against a production build on
   port 3100: layout and tap targets, the type-size floor, text contrast, visible focus
   states, and the visual baselines. These need a real browser; structure, names and live

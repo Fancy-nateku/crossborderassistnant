@@ -16,7 +16,7 @@ fi
 until docker exec "$NAME" pg_isready -U crossborder >/dev/null 2>&1; do sleep 1; done
 
 [ -f backend/.env ] || printf 'DATABASE_URL=%s\nPORT=4000\nALLOWED_ORIGINS=http://localhost:3000\nNODE_ENV=development\n' "$DB" > backend/.env
-[ -f .env ] || printf 'BACKEND_API_URL=http://localhost:4000\nDATABASE_URL=%s\n' "$DB" > .env
+[ -f frontend/.env ] || printf 'BACKEND_API_URL=http://localhost:4000\nDATABASE_URL=%s\n' "$DB" > frontend/.env
 
 npm install
 DATABASE_URL="$DB" npx prisma migrate deploy --schema prisma/schema.prisma
