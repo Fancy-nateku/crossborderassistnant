@@ -106,6 +106,8 @@
     "searchLabel": "Search your goods",
     "resultsLabel": "Matching goods",
     "searchHint": "Use any name you know.",
+    "suggestionsLabel": "Suggested goods",
+    "noSuggestions": "No match. Try another name.",
     "matches": "{count, plural, one {# match} other {# matches}}",
     "noMatches": "No match for “{query}”. Try another name.",
     "alsoCalled": "Also called {names}",

@@ -5,9 +5,8 @@ import { ROUTE_PROGRESS } from "@/components/plan/route-strip";
 import { WizardShell } from "@/components/plan/wizard-shell";
 import { CommonListBadge } from "@/components/trust/trust-badge";
 import { Button } from "@/components/ui/button";
-import { controlClass } from "@/components/ui/field";
-import { SearchIcon } from "@/components/ui/icons";
 import { OptionRow } from "@/components/ui/option-row";
+import { ProductSearch } from "@/components/plan/product-search";
 import { Link, getPathname } from "@/i18n/navigation";
 import { getBorder, searchProducts } from "@/lib/data/backend";
 import { parsePlanInput, planToQuery } from "@/lib/plan/params";
@@ -31,10 +30,17 @@ export default async function ProductPage({ params, searchParams }: Props) {
   const input = parsePlanInput(raw);
   const q = (Array.isArray(raw.q) ? raw.q[0] : raw.q)?.slice(0, 80) ?? "";
 
-  const [border, products] = await Promise.all([
+  const [border, products, suggestions] = await Promise.all([
     getBorder(input.borderId),
     searchProducts(q),
+    // Everything the dropdown can offer; the same database list, unfiltered.
+    q ? searchProducts("") : Promise.resolve(null),
   ]);
+  const dropdownProducts = (suggestions ?? products).map(({ id, officialName, localNames }) => ({
+    id,
+    officialName,
+    localNames,
+  }));
 
   const skipQuery = planToQuery({ ...input, productId: null });
 
@@ -60,21 +66,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
         <label htmlFor="q" className="text-[15px] font-bold">
           {t("product.searchLabel")}
         </label>
-        <div className="relative">
-          <span className="pointer-events-none absolute top-4 left-3.5 text-ink-muted">
-            <SearchIcon />
-          </span>
-          <input
-            id="q"
-            name="q"
-            type="search"
-            enterKeyHint="search"
-            defaultValue={q}
-            autoComplete="off"
-            aria-describedby="q-hint"
-            className={`${controlClass} pl-11`}
-          />
-        </div>
+        <ProductSearch products={dropdownProducts} defaultValue={q} />
         <p id="q-hint" className="m-0 text-sm text-ink-muted">
           {t("product.searchHint")}
         </p>
