@@ -1,5 +1,5 @@
 import { getToken } from "next-auth/jwt";
-import type { RequestHandler } from "express";
+import type { Request, RequestHandler } from "express";
 import { prisma } from "./db.js";
 import { sendError } from "./http.js";
 
@@ -16,9 +16,36 @@ declare global {
   }
 }
 
+type RejectReason =
+  | "auth_secret_missing"
+  | "no_session_cookie"
+  | "session_token_undecodable"
+  | "token_without_user_id"
+  | "user_not_found";
+
+/**
+ * Records why a request was refused so a 401/503 can be diagnosed from the
+ * server logs. Logs cookie NAMES only, never cookie values, tokens or secrets.
+ */
+function logRejection(req: Request, reason: RejectReason) {
+  const cookieHeader = typeof req.headers.cookie === "string" ? req.headers.cookie : "";
+  const cookieNames = cookieHeader
+    .split(";")
+    .map((part) => part.split("=")[0]?.trim() ?? "")
+    .filter((name) => /session-token/.test(name));
+  console.warn(JSON.stringify({
+    event: "auth_rejected",
+    reason,
+    requestId: req.requestId,
+    sessionCookieNames: cookieNames,
+    secureCookieExpected: process.env.NODE_ENV === "production",
+  }));
+}
+
 export const authenticate: RequestHandler = async (req, res, next) => {
   const secret = process.env.AUTH_SECRET;
   if (!secret) {
+    logRejection(req, "auth_secret_missing");
     sendError(req, res, 503, "AUTH_NOT_CONFIGURED", "Authentication is not configured.");
     return;
   }
@@ -36,6 +63,15 @@ export const authenticate: RequestHandler = async (req, res, next) => {
     });
     const userId = token?.id;
     if (typeof userId !== "string" || userId.length === 0) {
+      const hasSessionCookie = /session-token/.test(String(req.headers.cookie ?? ""));
+      logRejection(
+        req,
+        !token && !hasSessionCookie
+          ? "no_session_cookie"
+          : !token
+            ? "session_token_undecodable"
+            : "token_without_user_id",
+      );
       sendError(req, res, 401, "UNAUTHORIZED", "Authentication required.");
       return;
     }
@@ -45,6 +81,7 @@ export const authenticate: RequestHandler = async (req, res, next) => {
       select: { id: true, role: true },
     });
     if (!user) {
+      logRejection(req, "user_not_found");
       sendError(req, res, 401, "UNAUTHORIZED", "Authentication required.");
       return;
     }

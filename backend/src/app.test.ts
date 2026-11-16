@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import type { AddressInfo } from "node:net";
 import type { Server } from "node:http";
 
@@ -90,6 +90,28 @@ describe("Express API transport", () => {
     await expect(privatePlans.json()).resolves.toMatchObject({
       error: { code: "UNAUTHORIZED" },
     });
+  });
+
+  it("logs why a saved-plan request was refused, without logging cookie values", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const missing = await fetch(`${baseUrl}/api/v1/saved-plans`);
+    const garbage = await fetch(`${baseUrl}/api/v1/saved-plans`, {
+      headers: { cookie: "__Secure-authjs.session-token=super-secret-value" },
+    });
+    const events = warn.mock.calls.map((call) => JSON.parse(String(call[0])));
+    warn.mockRestore();
+
+    expect(missing.status).toBe(401);
+    expect(garbage.status).toBe(401);
+    expect(events).toMatchObject([
+      { event: "auth_rejected", reason: "no_session_cookie" },
+      {
+        event: "auth_rejected",
+        reason: "session_token_undecodable",
+        sessionCookieNames: ["__Secure-authjs.session-token"],
+      },
+    ]);
+    expect(JSON.stringify(events)).not.toContain("super-secret-value");
   });
 
   it("keeps admin routes private and origin-protected", async () => {
