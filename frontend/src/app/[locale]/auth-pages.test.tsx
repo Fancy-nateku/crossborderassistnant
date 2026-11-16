@@ -24,6 +24,6 @@ describe("sign-in and register screens", () => {
 
     const form = screen.getByRole("heading", { level: 1, name: messages.auth.registerTitle }).closest("form");
     expect(form?.parentElement).toHaveClass("border", "bg-panel", "rounded-control");
-    expect(screen.getByRole("link", { name: messages.auth.login, exact: false })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: new RegExp(`^${messages.auth.login}$`) })).toBeInTheDocument();
   });
 });
