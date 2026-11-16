@@ -44,7 +44,7 @@ export function RegisterForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex max-w-md flex-col gap-4">
+    <form onSubmit={onSubmit} className="flex flex-col gap-4">
       <h1 className="m-0 text-[28px] leading-[1.15] font-bold">{t("registerTitle")}</h1>
       <label className={labelClass}>
         {t("name")}
