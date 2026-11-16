@@ -70,3 +70,18 @@ export function hasValue(
 ): input is PlanInput & { quantity: number; valueLocal: number } {
   return input.quantity !== null && input.valueLocal !== null;
 }
+
+
+/** Identifies a plan by its inputs, so a result page can find the account plan it belongs to. */
+export function planKey(input: PlanInput): string {
+  return JSON.stringify([
+    input.from,
+    input.to,
+    input.borderId,
+    input.productId,
+    input.quantity,
+    input.unit,
+    input.currency,
+    input.valueLocal,
+  ]);
+}

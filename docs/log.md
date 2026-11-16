@@ -398,3 +398,28 @@ describes the app:** signed-in users can now save plans to their account. Needs 
 - Real low-end Android phone testing of the back-button behaviour and the wizard.
 - The PRD, `CLAUDE.md` and READMEs were edited to describe optional accounts. The team has not
   yet confirmed that this is the intended product direction.
+
+## 2026-11-17 One place for saved plans: the account
+
+Supersedes the two entries above on where plans are saved. **Needs a team nod; it changes the
+product.** Before this, a signed-in user saved to the account and a signed-out user saved to
+the browser. The two stores drifted apart: a plan ticked 4 of 4 on the result page showed 0 of 4
+on the Plans page, because the ticks lived in the browser and the account copy was created
+without them.
+
+Decision (requested by the project owner): plans and ticks live in the account only.
+
+- **Signed out:** building a plan and seeing its checklist still work. The Save button becomes
+  "Sign in to save this plan" and returns to the same result after sign-in or register
+  (`?next=`, same-site paths only). The Plans page asks the person to sign in.
+- **Signed in:** one `AccountPlanProvider` holds the saved state and ticks for the result page.
+  It finds the account's copy of the plan, loads its ticks, saves with the ticks made so far,
+  and sends each later tick to the server. A tick that cannot be saved is undone and reported.
+  The Plans page reads the same server data, so the two always agree, on any device.
+- **Removed:** browser storage of plans and ticks, the device list, the device save, and their
+  tests and messages. The Playwright guest-workflow spec is replaced by a signed-out spec.
+- **Why:** one store cannot disagree with itself, and several accounts can share one phone.
+- **Cost:** a trader must create an account to keep a plan. That may stop some people saving at
+  all. Added to the PRD's open questions for the trader interviews.
+- **Not yet checked:** the new Playwright spec (`e2e/signed-out-workflow.spec.ts`) has not been
+  run, and the flow has not been tried in a real browser against a live backend.

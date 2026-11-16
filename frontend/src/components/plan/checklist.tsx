@@ -1,64 +1,16 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { SourceLine } from "@/components/trust/source-line";
 import { TrustBadge } from "@/components/trust/trust-badge";
 import { TrustCallout } from "@/components/trust/trust-callout";
-import type { ChecklistItemView, PlanInput } from "@/lib/domain";
-import {
-  DevicePlanStorageError,
-  planStorageKey,
-  setChecklistItem,
-  type StorageFailure,
-} from "@/lib/plan/device-plans";
-import { useDevicePlanStore } from "@/lib/plan/use-device-plan-store";
+import type { ChecklistItemView } from "@/lib/domain";
+import { useAccountPlan } from "./account-plan-context";
 
-export function Checklist({
-  items,
-  input,
-}: {
-  items: ChecklistItemView[];
-  input: PlanInput;
-}) {
+export function Checklist({ items }: { items: ChecklistItemView[] }) {
   const t = useTranslations();
-  const storageKey = planStorageKey(input);
-  const snapshot = useDevicePlanStore();
-  const done = useMemo(
-    () => {
-      if (snapshot.status !== "ready") return new Set<string>();
-      const saved = new Set(snapshot.store.checklists[storageKey] ?? []);
-      return new Set(
-        items
-          .filter((item) => saved.has(item.requirementId))
-          .map((item) => item.requirementId),
-      );
-    },
-    [items, snapshot, storageKey],
-  );
-  const storageReady = snapshot.status === "ready";
-  const [mutationFailure, setMutationFailure] = useState<StorageFailure | null>(null);
-  const storageFailure =
-    mutationFailure ?? (snapshot.status === "error" ? snapshot.reason : null);
-
-  const toggle = (id: string) => {
-    const nextDone = !done.has(id);
-    try {
-      setChecklistItem(input, id, nextDone);
-      setMutationFailure(null);
-    } catch (error) {
-      setMutationFailure(
-        error instanceof DevicePlanStorageError ? error.reason : "unavailable",
-      );
-    }
-  };
-
-  const storageErrorMessage =
-    storageFailure === "outdated"
-      ? t("result.storageOutdated")
-      : storageFailure
-        ? t("result.storageUnavailable")
-        : null;
+  const { done, toggle, syncFailed } = useAccountPlan();
+  const doneCount = items.filter((item) => done.has(item.requirementId)).length;
 
   return (
     <section className="flex flex-col gap-3" aria-labelledby="checklist-title">
@@ -67,13 +19,13 @@ export function Checklist({
           {t("result.checklistTitle")}
         </h2>
         <span className="text-[15px] text-ink-muted" aria-live="polite">
-          {t("result.progress", { done: done.size, total: items.length })}
+          {t("result.progress", { done: doneCount, total: items.length })}
         </span>
       </div>
 
-      {storageErrorMessage ? (
+      {syncFailed ? (
         <div className="rounded-control bg-unverified-bg p-3 text-sm text-unverified-ink" role="alert">
-          <p className="m-0">{storageErrorMessage}</p>
+          <p className="m-0">{t("account.syncFailed")}</p>
         </div>
       ) : null}
 
@@ -83,7 +35,6 @@ export function Checklist({
             <ChecklistItem
               item={item}
               checked={done.has(item.requirementId)}
-              disabled={!storageReady || Boolean(storageFailure)}
               onToggle={() => toggle(item.requirementId)}
             />
           </li>

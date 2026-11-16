@@ -1,10 +1,10 @@
 import { expect, test } from "@playwright/test";
 
-test("a guest can preview, save and reopen a plan on this device", async ({ page }) => {
+test("a signed-out visitor can build a plan, and is asked to sign in only to save it", async ({ page }) => {
   const pageErrors: string[] = [];
   const consoleErrors: string[] = [];
   const failedRequests: string[] = [];
-  const protectedPlanRequests: string[] = [];
+  const savedPlanRequests: string[] = [];
   page.on("pageerror", (error) => pageErrors.push(error.message));
   page.on("console", (message) => {
     if (message.type() === "error") consoleErrors.push(message.text());
@@ -12,7 +12,7 @@ test("a guest can preview, save and reopen a plan on this device", async ({ page
   page.on("requestfailed", (request) => failedRequests.push(request.url()));
   page.on("request", (request) => {
     if (new URL(request.url()).pathname.includes("/api/v1/saved-plans")) {
-      protectedPlanRequests.push(request.url());
+      savedPlanRequests.push(request.url());
     }
   });
 
@@ -28,25 +28,23 @@ test("a guest can preview, save and reopen a plan on this device", async ({ page
 
   await expect(page).toHaveURL(/\/en\/plan\/result/);
   await expect(page.getByRole("heading", { name: "Your trade plan" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Save plan" })).toBeVisible();
-  await expect(page.getByRole("link", { name: /sign in/i })).toHaveCount(0);
   await expect(page.getByText("No verified checklist for this case.")).toBeVisible();
 
-  await page.getByRole("button", { name: "Save plan" }).click();
-  await expect(page.getByText("Plan saved on this device.")).toBeVisible();
-  await expect(page.getByText(/do not sync across devices/)).toBeVisible();
+  // Plans are saved to the account only: signed out, Save becomes "Sign in to save".
+  await expect(page.getByRole("button", { name: "Save plan" })).toHaveCount(0);
+  const signIn = page.getByRole("link", { name: "Sign in to save this plan" });
+  await expect(signIn).toBeVisible();
+  await expect(signIn).toHaveAttribute("href", /\/login\?next=/);
 
-  await page.getByRole("link", { name: "View in Saved Plans" }).click();
-  await expect(page).toHaveURL(/\/en\/plans/);
-  await expect(page.getByText(/stored only on this device/)).toBeVisible();
-  const savedPlan = page.getByRole("link", { name: /Goods not matched, to Uganda/ });
-  await expect(savedPlan).toBeVisible();
-  await savedPlan.click();
-  await expect(page).toHaveURL(/\/en\/plan\/result/);
-  await expect(page.getByRole("heading", { name: "Your trade plan" })).toBeVisible();
+  await page.goto("/en/plans");
+  await expect(page.getByRole("heading", { name: "Sign in to see your saved plans" })).toBeVisible();
+
+  await page.getByRole("link", { name: "Sign in", exact: true }).first().click();
+  await expect(page).toHaveURL(/\/en\/login/);
+  await expect(page.getByRole("heading", { name: "Log in" })).toBeVisible();
 
   expect(pageErrors).toEqual([]);
   expect(consoleErrors).toEqual([]);
   expect(failedRequests).toEqual([]);
-  expect(protectedPlanRequests).toEqual([]);
+  expect(savedPlanRequests).toEqual([]);
 });

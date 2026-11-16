@@ -34,9 +34,9 @@ Do not expose `BACKEND_API_URL` to browser code.
 | `EXCHANGE_RATE_MAX_AGE_DAYS` | `30`; owner-approved maximum rate age |
 
 Protected backend saved-plan and admin endpoints require a valid Auth.js session token
-(issued by the Next.js app's credentials sign-in) and the persisted user role. Guest plans
-are stored only in browser local storage; do not make those protected endpoints public or
-proxy guest plans to them. The backend looks the token's user up in its own database, so the
+(issued by the Next.js app's credentials sign-in) and the persisted user role. Saved plans
+and their checklist ticks live only here, in the account; the frontend keeps no copy. Do not
+make those protected endpoints public. The backend looks the token's user up in its own database, so the
 frontend and backend must use the same `AUTH_SECRET` and the same database. Keep the secret
 in an untracked environment file or deployment secret manager; never prefix it with
 `NEXT_PUBLIC_`.

@@ -5,6 +5,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
+import { afterAuthPath } from "@/lib/auth/next-path";
+import { useNextParam } from "@/lib/auth/use-next-param";
 
 const inputClass = "min-h-11 w-full rounded-control border border-line bg-panel px-3 text-[16px]";
 const labelClass = "flex flex-col gap-1.5 font-bold";
@@ -14,6 +16,8 @@ export function RegisterForm() {
   const locale = useLocale();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  // Keep the "come back to this page" target when switching between sign in and register.
+  const next = useNextParam();
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -40,7 +44,7 @@ export function RegisterForm() {
       setError(t("errorGeneric"));
       return;
     }
-    window.location.assign(new URL(`/${locale}/plans`, window.location.origin).href);
+    window.location.assign(new URL(afterAuthPath(window.location.search, locale), window.location.origin).href);
   }
 
   return (
@@ -62,7 +66,7 @@ export function RegisterForm() {
       {error ? <p role="alert" className="m-0 text-[15px] text-red-700">{error}</p> : null}
       <Button type="submit" disabled={pending}>{t("registerButton")}</Button>
       <p className="m-0 text-[15px]">
-        {t("haveAccount")} <Link href="/login">{t("login")}</Link>
+        {t("haveAccount")} <Link href={next ? { pathname: "/login", query: { next } } : "/login"}>{t("login")}</Link>
       </p>
     </form>
   );

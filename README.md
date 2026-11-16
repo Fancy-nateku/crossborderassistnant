@@ -29,11 +29,12 @@ Next.js server-rendered pages use a server-only adapter, and same-origin referen
 preview routes proxy to Express. Configure `BACKEND_API_URL` in the Next.js server
 environment and allowlist the frontend origin in the backend.
 
-Saving works two ways. **Signed out**, a plan is stored in the current browser's local
-storage, does not sync across devices, may be removed when browser storage is cleared, and is
-never sent to the backend. **Signed in** (optional email-and-password account), the plan is
-saved to the server and the Plans page shows only that account's plans. No account is needed
-to preview a plan or to save it to the device. See [backend/README.md](./backend/README.md).
+Saved plans live in one place: the signed-in user's account (email and password). No account
+is needed to build a plan and see its checklist, but saving needs one: signed out, the Save
+button becomes "Sign in to save this plan" and brings the person back to the same result after
+they sign in. Checklist ticks are saved with the plan, so the result page and the Plans page
+always show the same progress, on any device. Nothing is saved in the browser. See
+[backend/README.md](./backend/README.md).
 
 ## Deploying
 
@@ -87,7 +88,7 @@ content.
 frontend/src/app/[locale]/        landing, plan/{route,product,value,result}, plans
 frontend/src/components/ui/       Button, Field, OptionRow, icons
 frontend/src/components/trust/    TrustBadge, TrustCallout, SourceLine, VerdictCard, HelpPanel, Disclaimer
-frontend/src/components/plan/     RouteStrip, WizardShell, BackLink, ValueForm, Checklist, SavePlanButton, device and account saved-plan lists
+frontend/src/components/plan/     RouteStrip, WizardShell, BackLink, ValueForm, Checklist, AccountPlanProvider (one source for saved state and ticks), SavePlanButton, account saved-plan list
 frontend/src/lib/rules/           pure rules engine, trust-state derivation, checklist builder
 frontend/src/lib/data/            Repository adapters, fixtures, and Express server client
 frontend/src/lib/api/              Same-origin API proxy and server-side backend client

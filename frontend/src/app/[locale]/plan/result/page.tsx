@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { AccountPlanProvider } from "@/components/plan/account-plan-context";
 import { Checklist } from "@/components/plan/checklist";
 import { RouteStripBar, ROUTE_PROGRESS } from "@/components/plan/route-strip";
 import { SavePlanButton } from "@/components/plan/save-plan-button";
@@ -108,6 +109,7 @@ export default async function ResultPage({ params, searchParams }: Props) {
       />
 
       <main className="flex-1">
+        <AccountPlanProvider input={input} requirementIds={items.map((item) => item.requirementId)}>
         <Container className="grid gap-[22px] py-5 md:py-8 lg:grid-cols-[5fr_7fr] lg:items-start lg:gap-x-10 lg:gap-y-6 xl:gap-x-14">
           <div className="flex flex-col gap-[22px] lg:sticky lg:top-6 lg:col-start-1 lg:row-start-1 lg:gap-6">
             <VerdictCard
@@ -117,14 +119,7 @@ export default async function ResultPage({ params, searchParams }: Props) {
             />
             <div className="grid gap-[22px] md:grid-cols-2 md:items-start lg:grid-cols-1 lg:gap-6">
               <section className="flex flex-col gap-2.5">
-                <SavePlanButton
-                  input={input}
-                  borderName={border.name}
-                  productName={product?.officialName ?? null}
-                  verdict={verdict}
-                  totalCount={items.length}
-                  requirementIds={items.map((item) => item.requirementId)}
-                />
+                <SavePlanButton input={input} />
                 <ExternalButton href={whatsAppUrl} className="min-h-[52px] text-[17px]">
                   <ShareIcon />
                   {t("result.share")}
@@ -136,7 +131,7 @@ export default async function ResultPage({ params, searchParams }: Props) {
 
           <div className="lg:col-start-2 lg:row-start-1">
             {items.length > 0 ? (
-              <Checklist items={items} input={input} />
+              <Checklist items={items} />
             ) : (
               <section className="flex flex-col gap-2" aria-labelledby="checklist-title">
                 <h2 id="checklist-title" className="m-0 text-[22px] leading-[1.2] font-bold">
@@ -153,6 +148,7 @@ export default async function ResultPage({ params, searchParams }: Props) {
             <Disclaimer />
           </div>
         </Container>
+        </AccountPlanProvider>
       </main>
     </PageShell>
   );

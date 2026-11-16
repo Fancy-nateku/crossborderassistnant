@@ -94,22 +94,21 @@ Key fields the UI depends on:
 
 ## Core flow
 
-1. Start a plan (no sign-in needed; an account is optional)
+1. Start a plan (no sign-in needed to build it and see the checklist)
 2. Route and border (default KE → UG via Busia)
 3. Product (search with local names; show Common List status)
 4. Value (KES or UGX in; USD shown with the dated rate)
 5. Rule check → one verdict: `likely_str_eligible`, `above_threshold`, `not_on_common_list`, `cannot_confirm`
 6. Checklist with sources, fees, trust states, disclaimer
-7. Save the plan (on this device as a guest, or to your account when signed in) · Share to WhatsApp (`wa.me` link, plain text + source links)
+7. Save the plan to your account (signed out, the button asks you to sign in and returns you here) · Share to WhatsApp (`wa.me` link, plain text + source links)
 
-Two ways to save, and they are kept apart:
-
-- **Guest (signed out):** plans and checklist ticks use this browser's local storage. They do
-  not sync across devices, and clearing browser storage may remove them. Never send guest
-  plans to the protected backend saved-plan APIs.
-- **Account (signed in):** plans are saved to the server against the user and follow them to
-  any device. The Plans page shows only the signed-in account's plans, never the device's
-  guest plans, because several accounts can share one browser.
+Saved plans live in **one place: the signed-in user's account.** Do not add a second store
+(browser storage, cookies) for plans or checklist ticks; two stores drift apart and show
+different progress. Signed out, the Save button becomes "Sign in to save this plan" and returns
+to the same result afterwards. Ticks made before saving are held in memory and sent with the
+save. `AccountPlanProvider` is the single source of saved state and ticks for the result page,
+and the Plans page reads the same server data. The Plans page shows only the signed-in
+account's plans, because several accounts can share one browser.
 
 ## Suggested structure
 

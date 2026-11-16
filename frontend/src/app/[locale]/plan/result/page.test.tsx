@@ -1,14 +1,55 @@
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { act } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { messages, metadataTitle, redirectTarget, renderScreen } from "@/test/screen";
-import { readDevicePlanStore } from "@/lib/plan/device-plans";
+import { parsePlanInput } from "@/lib/plan/params";
 import ResultPage, { generateMetadata } from "./page";
 
 vi.mock("next-intl/server", () => import("@/test/mocks/intl-server"));
 vi.mock("@/i18n/navigation", () => import("@/test/mocks/navigation"));
 
+type Call = { url: string; method: string; body?: string };
+
+/** A fake backend: the session, the account's saved plans, and the save/tick endpoints. */
+function stubBackend(options: { user?: boolean; existing?: { id: string; done: string[] } } = {}) {
+  const calls: Call[] = [];
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (url: string, init?: RequestInit) => {
+      const method = init?.method ?? "GET";
+      calls.push({ url, method, body: init?.body as string | undefined });
+      if (url.startsWith("/api/auth/session")) {
+        return Response.json(options.user ? { user: { id: "u1" } } : {});
+      }
+      if (url === "/api/v1/saved-plans" && method === "GET") {
+        const input = parsePlanInput(ELIGIBLE);
+        return Response.json({
+          data: options.existing ? [{ id: options.existing.id, input }] : [],
+        });
+      }
+      if (url === "/api/v1/saved-plans" && method === "POST") {
+        return Response.json({ data: { id: "plan-9" } }, { status: 201 });
+      }
+      if (/^\/api\/v1\/saved-plans\/[^/]+$/.test(url) && options.existing) {
+        const items = ["req-sco", "req-scd", "req-threshold", "req-product"].map((requirementId) => ({
+          requirementId,
+          done: options.existing?.done.includes(requirementId) ?? false,
+        }));
+        return Response.json({ data: { items } });
+      }
+      return Response.json({ data: {} });
+    }),
+  );
+  return calls;
+}
+
 beforeEach(() => {
   window.localStorage.clear();
+  stubBackend();
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
 });
 
 /** A complete plan. KES 30,000 at the fixture rate of 130 is USD 230.77, under the ceiling. */
@@ -160,21 +201,46 @@ describe("result screen — checklist", () => {
     expect(scd).toHaveTextContent("Where: [office at Busia]");
   });
 
-  it("persists checklist ticks when the trader reopens the plan", async () => {
-    const { unmount } = await renderScreen(ResultPage, ELIGIBLE);
+  it("counts ticks as they are made", async () => {
+    await renderScreen(ResultPage, ELIGIBLE);
 
     expect(screen.getByText("0 of 4 done")).toBeInTheDocument();
-
     const boxes = screen.getAllByRole("checkbox");
     expect(boxes).toHaveLength(4);
     fireEvent.click(boxes[0]);
     expect(boxes[0]).toBeChecked();
     expect(screen.getByText("1 of 4 done")).toBeInTheDocument();
+  });
 
-    unmount();
+  it("picks up the ticks of a plan the account already saved, and keeps them in step", async () => {
+    const calls = stubBackend({ user: true, existing: { id: "plan-3", done: ["req-scd", "req-sco"] } });
     await renderScreen(ResultPage, ELIGIBLE);
-    await waitFor(() => expect(screen.getAllByRole("checkbox")[0]).toBeChecked());
-    expect(screen.getByText("1 of 4 done")).toBeInTheDocument();
+
+    await waitFor(() => expect(screen.getByText("2 of 4 done")).toBeInTheDocument());
+    expect(screen.getByText(messages.account.saved)).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: messages.account.saveButton })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getAllByRole("checkbox").find((box) => !(box as HTMLInputElement).checked)!);
+    await waitFor(() => expect(screen.getByText("3 of 4 done")).toBeInTheDocument());
+    const patch = calls.find((c) => c.method === "PATCH");
+    expect(patch?.url).toMatch(/^\/api\/v1\/saved-plans\/plan-3\/checklist-items\//);
+    expect(patch?.body).toBe(JSON.stringify({ done: true }));
+  });
+
+  it("rolls a tick back and says so when the account cannot be updated", async () => {
+    stubBackend({ user: true, existing: { id: "plan-3", done: [] } });
+    const base = globalThis.fetch;
+    vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) =>
+      init?.method === "PATCH" ? new Response("{}", { status: 502 }) : base(url, init)));
+    await renderScreen(ResultPage, ELIGIBLE);
+    await waitFor(() => expect(screen.getByText(messages.account.saved)).toBeInTheDocument());
+
+    fireEvent.click(screen.getAllByRole("checkbox")[0]);
+
+    await waitFor(() =>
+      expect(screen.getAllByRole("alert").map((el) => el.textContent)).toContain(messages.account.syncFailed),
+    );
+    expect(screen.getByText("0 of 4 done")).toBeInTheDocument();
   });
 });
 
@@ -192,17 +258,39 @@ describe("result screen — disclaimer, actions and help", () => {
     }
   });
 
-  it("saves a plan locally without asking the trader to sign in", async () => {
+  it("sends a signed-out trader to sign in, and back to this result afterwards", async () => {
     await renderScreen(ResultPage, ELIGIBLE);
 
-    expect(screen.getByRole("button", { name: messages.result.save })).toBeInTheDocument();
-    expect(screen.getByText(messages.result.storedOnDevice)).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: messages.result.save }));
+    const link = await screen.findByRole("link", { name: messages.result.signInToSave });
+    const href = link.getAttribute("href") ?? "";
+    expect(href.startsWith("/login?next=")).toBe(true);
+    expect(decodeURIComponent(href)).toContain("/plan/result?from=KE&to=UG&border=busia");
+    expect(screen.queryByRole("button", { name: messages.account.saveButton })).not.toBeInTheDocument();
+  });
 
-    await waitFor(() =>
-      expect(screen.getByText(messages.result.savedSuccess)).toBeInTheDocument(),
-    );
-    expect(readDevicePlanStore().plans).toHaveLength(1);
+  it("saves to the account with the ticks made so far, then shows the saved state", async () => {
+    const calls = stubBackend({ user: true });
+    await renderScreen(ResultPage, ELIGIBLE);
+
+    const boxes = screen.getAllByRole("checkbox");
+    fireEvent.click(boxes[0]);
+    fireEvent.click(boxes[1]);
+    fireEvent.click(await screen.findByRole("button", { name: messages.account.saveButton }));
+
+    await waitFor(() => expect(screen.getByText(messages.account.saved)).toBeInTheDocument());
+    expect(calls.filter((c) => c.method === "POST")).toHaveLength(1);
+    const patches = calls.filter((c) => c.method === "PATCH");
+    expect(patches).toHaveLength(2);
+    expect(patches.every((c) => c.url.startsWith("/api/v1/saved-plans/plan-9/checklist-items/"))).toBe(true);
+    expect(screen.getByText("2 of 4 done")).toBeInTheDocument();
+  });
+
+  it("does not offer a device-only save any more", async () => {
+    await renderScreen(ResultPage, ELIGIBLE);
+    await act(async () => {});
+
+    expect(screen.queryByRole("button", { name: "Save plan" })).not.toBeInTheDocument();
+    expect(window.localStorage.length).toBe(0);
   });
 
   it("shares to WhatsApp as plain text with the verdict, the items and their sources", async () => {
