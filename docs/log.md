@@ -347,3 +347,54 @@ the relevant official border authority. The isolated Busia reference seed links 
 URA, and EAC sources only as evidence for Busia OSBP existence, name, and country pairing.
 It does not establish a product-specific customs rule and does not add fees, contacts,
 thresholds, exchange rates, documents, or trade claims.
+
+## 2026-11-09 to 2026-11-17 Accounts, content import, deployment, and fixes
+
+Catches the log up with work merged since the guest-only entry above. **That entry no longer
+describes the app:** signed-in users can now save plans to their account. Needs a team nod.
+
+**What changed**
+
+- **Optional accounts (FR-01, FR-02, FR-08).** Email-and-password sign-up, login and logout
+  with Auth.js credentials and JWT sessions (PRs #16, #17). A signed-in user saves to the server
+  through the Next proxy routes to Express; a signed-out user still saves to this browser. The
+  PRD, `CLAUDE.md` and READMEs previously said there was no account flow and are updated to match.
+  Open question for the interviews: do traders want accounts at all (PRD open questions).
+- **Plans page shows one list.** Signed in: only the account's plans. Signed out: only this
+  device's plans. Reason: several accounts can share one browser, and the device list must not
+  leak into another account. Nothing is shown until the session check finishes.
+- **Content import (part of #8, PRs #18, #19).** Reviewed content registry and import script for
+  EAC gazette-backed products, requirements and rules, with review evidence.
+- **Repo reorganised** into `frontend/`, `backend/` and `prisma/` workspaces. Added a Render
+  blueprint (`render.yaml`) for the Express API and Postgres, running migrations at start
+  because the free plan has no pre-deploy command.
+- **STR threshold query fix (#15):** the value step sends only `from`, `to`, `borderId`.
+- **Back-button fix.** The wizard and result back arrows were plain links, so each press
+  pushed a new history entry and buried the forward history. `BackLink` now steps back in
+  history when the target is the screen the user came from, and falls back to the link
+  otherwise. Covered by jsdom tests with mocked history; not yet checked on a real phone.
+- **Error screen keeps navigation.** When a page fails to render (for example the backend is
+  unreachable) the error screen now includes the header and bottom bar.
+- **Backend logs why it refuses a session** (`auth_rejected` with a reason; cookie names only,
+  never values).
+
+**Problems and solutions**
+
+- **Frontend build failed on Vercel after the reorganisation** with "output directory `.next`
+  was not found". The last good deployment was the commit before the move into `frontend/`.
+  Fix: set the Vercel project's Root Directory to `frontend` and include source files outside
+  it. Documented in the README.
+- **Signing in worked but saving and listing returned 401** (`UNAUTHORIZED`) while the
+  frontend session was valid. The backend verifies the cookie with its own `AUTH_SECRET` and
+  looks the user up in its own database, so a different secret or a different database makes
+  the backend refuse a valid frontend session. Saving went through after the deployment was
+  rebuilt; the exact setting that was wrong was not captured in any log, so the cause is
+  unconfirmed. The new `auth_rejected` log is there to name it if it recurs.
+- **Postgres closed pooled connections now and then** (`terminating connection due to
+  administrator command` in the Render logs). Prisma reconnects; no code change.
+
+**Still open**
+
+- Real low-end Android phone testing of the back-button behaviour and the wizard.
+- The PRD, `CLAUDE.md` and READMEs were edited to describe optional accounts. The team has not
+  yet confirmed that this is the intended product direction.

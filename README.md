@@ -27,14 +27,37 @@ An Express API is under `backend/`; it shares the Prisma schema and migrations i
 Its public endpoints provide border/product/rate lookups and server-side plan previews.
 Next.js server-rendered pages use a server-only adapter, and same-origin reference-data and
 preview routes proxy to Express. Configure `BACKEND_API_URL` in the Next.js server
-environment and allowlist the frontend origin in the backend. Saved plans are guest-only:
-they are stored in the current browser's local storage, do not sync across devices, and may
-be removed when browser storage is cleared. They are never sent to the backend. The backend
-retains its authenticated saved-plan and admin APIs for future approved use; guest access
-does not weaken those protections. See [backend/README.md](./backend/README.md).
+environment and allowlist the frontend origin in the backend.
 
-No account or sign-in is required to preview or save a plan. The database and deployment
-still need environment setup and verification.
+Saving works two ways. **Signed out**, a plan is stored in the current browser's local
+storage, does not sync across devices, may be removed when browser storage is cleared, and is
+never sent to the backend. **Signed in** (optional email-and-password account), the plan is
+saved to the server and the Plans page shows only that account's plans. No account is needed
+to preview a plan or to save it to the device. See [backend/README.md](./backend/README.md).
+
+## Deploying
+
+Two services, plus a database:
+
+| Service | Where | Notes |
+| --- | --- | --- |
+| Frontend (Next.js) | Vercel | Set **Root Directory** to `frontend` and enable "Include source files outside of the Root Directory in the Build Step" (the app uses `../prisma`). Without this the build fails with "output directory `.next` was not found". |
+| Backend (Express) | Render, from `render.yaml` | Runs migrations at start (the free plan has no pre-deploy command). |
+| PostgreSQL | Render (`crossborder-db`) | Free databases expire after a set period; check the dashboard. |
+
+Variables that must agree between the services:
+
+| Variable | Vercel (frontend) | Render (backend) |
+| --- | --- | --- |
+| `AUTH_SECRET` | required | required, **exactly the same value** |
+| `DATABASE_URL` | required, **the same database** | provided by the Render database |
+| `BACKEND_API_URL` | required, HTTPS URL of the backend | not used |
+| `ALLOWED_ORIGINS` | not used | the exact frontend origin(s), no wildcard |
+
+If `AUTH_SECRET` differs, or the two services use different databases, signing in works but
+saving or listing account plans returns 401. The backend logs one `auth_rejected` line with a
+`reason` for every refusal (see [backend/README.md](./backend/README.md)). If the backend is
+unreachable, pages that need data show an error and the API returns 502 `BACKEND_UNAVAILABLE`.
 
 ### Seed the Busia reference record
 
@@ -64,7 +87,7 @@ content.
 frontend/src/app/[locale]/        landing, plan/{route,product,value,result}, plans
 frontend/src/components/ui/       Button, Field, OptionRow, icons
 frontend/src/components/trust/    TrustBadge, TrustCallout, SourceLine, VerdictCard, HelpPanel, Disclaimer
-frontend/src/components/plan/     RouteStrip, WizardShell, ValueForm, Checklist, device-local save/listing
+frontend/src/components/plan/     RouteStrip, WizardShell, BackLink, ValueForm, Checklist, SavePlanButton, device and account saved-plan lists
 frontend/src/lib/rules/           pure rules engine, trust-state derivation, checklist builder
 frontend/src/lib/data/            Repository adapters, fixtures, and Express server client
 frontend/src/lib/api/              Same-origin API proxy and server-side backend client

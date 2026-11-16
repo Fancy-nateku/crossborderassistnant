@@ -30,7 +30,7 @@ If code, PRD and design disagree, flag it in the PR rather than silently picking
 - Next.js (App Router) + React + TypeScript (strict mode)
 - Tailwind CSS (no component library; our own small component set in `frontend/src/components/ui`)
 - Prisma ORM + managed PostgreSQL
-- Auth.js remains backend infrastructure for protected admin/saved-plan APIs; the trader-facing website has no sign-in or account flow.
+- Auth.js (v5, credentials provider, JWT sessions) provides optional email-and-password accounts. The Express backend verifies the session cookie for account saved-plan and admin APIs, so `AUTH_SECRET` must be identical on the frontend and the backend.
 - `next-intl` for i18n from day one (English first, Swahili next)
 - Hosted on Vercel; GitHub for version control
 
@@ -94,17 +94,22 @@ Key fields the UI depends on:
 
 ## Core flow
 
-1. Start a plan (no sign-in needed)
+1. Start a plan (no sign-in needed; an account is optional)
 2. Route and border (default KE → UG via Busia)
 3. Product (search with local names; show Common List status)
 4. Value (KES or UGX in; USD shown with the dated rate)
 5. Rule check → one verdict: `likely_str_eligible`, `above_threshold`, `not_on_common_list`, `cannot_confirm`
 6. Checklist with sources, fees, trust states, disclaimer
-7. Save on this device without an account · Share to WhatsApp (`wa.me` link, plain text + source links)
+7. Save the plan (on this device as a guest, or to your account when signed in) · Share to WhatsApp (`wa.me` link, plain text + source links)
 
-Saved plans and checklist ticks use this browser's local storage. They do not sync across
-devices, and clearing browser storage may remove them. Never send guest plans to protected
-backend saved-plan APIs.
+Two ways to save, and they are kept apart:
+
+- **Guest (signed out):** plans and checklist ticks use this browser's local storage. They do
+  not sync across devices, and clearing browser storage may remove them. Never send guest
+  plans to the protected backend saved-plan APIs.
+- **Account (signed in):** plans are saved to the server against the user and follow them to
+  any device. The Plans page shows only the signed-in account's plans, never the device's
+  guest plans, because several accounts can share one browser.
 
 ## Suggested structure
 

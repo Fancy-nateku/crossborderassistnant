@@ -27,17 +27,19 @@ Do not expose `BACKEND_API_URL` to browser code.
 | `DATABASE_URL` | PostgreSQL connection string for the shared Prisma schema |
 | `PORT` | API listen port; defaults to `4000` |
 | `ALLOWED_ORIGINS` | Comma-separated exact browser origins; no wildcard |
-| `BACKEND_API_URL` | Next.js server-only URL of the Express API, including scheme and port |
+| `AUTH_SECRET` | Secret used to verify Auth.js session cookies. Must equal the frontend's `AUTH_SECRET`; set it as a deployment secret |
+| `BACKEND_API_URL` | Next.js server-only URL of the Express API, including scheme and port (set on the frontend, not the backend) |
 | `NODE_ENV` | `development`, `test`, or `production` |
 | `SOURCE_MAX_AGE_DAYS` | `30`; owner-approved maximum source age |
 | `EXCHANGE_RATE_MAX_AGE_DAYS` | `30`; owner-approved maximum rate age |
 
-Protected backend saved-plan and admin endpoints still require a valid server-issued
-Auth.js token and the persisted user role. The trader-facing Next.js application has no
-sign-in UI or token-issuing routes, and guest plans are stored only in browser local
-storage; do not make those protected endpoints public or proxy guest plans to them. Keep
-any backend authentication secret in an untracked environment file or deployment secret
-manager; never prefix it with `NEXT_PUBLIC_`.
+Protected backend saved-plan and admin endpoints require a valid Auth.js session token
+(issued by the Next.js app's credentials sign-in) and the persisted user role. Guest plans
+are stored only in browser local storage; do not make those protected endpoints public or
+proxy guest plans to them. The backend looks the token's user up in its own database, so the
+frontend and backend must use the same `AUTH_SECRET` and the same database. Keep the secret
+in an untracked environment file or deployment secret manager; never prefix it with
+`NEXT_PUBLIC_`.
 
 Use an HTTPS backend URL in production (plain HTTP is permitted only for loopback
 addresses used by local builds/tests) and include the exact frontend origin
@@ -87,8 +89,14 @@ reference responses can be briefly cached. Preview responses are no-store.
   persisted user role. Auth.js documents these tokens as intended for the issuing app;
   this Express-side validation is a transitional same-application integration, not a
   supported identity-provider contract.
-- The legacy Auth.js token validator remains for protected backend APIs; the trader-facing
-  app no longer issues tokens or offers phone, email, password, OTP, or social sign-in.
+- The Next.js app issues Auth.js credentials sessions (email and password, JWT). The backend
+  validates them for protected APIs. Phone, OTP and social sign-in are not implemented.
+- Every refused authenticated request logs one JSON line, `{"event":"auth_rejected", "reason",
+  "requestId", "sessionCookieNames", ...}`. Cookie values, tokens and secrets are never
+  logged. Reasons: `auth_secret_missing` (backend has no `AUTH_SECRET`), `no_session_cookie`
+  (cookie did not reach the backend), `session_token_undecodable` (`AUTH_SECRET` differs from
+  the frontend's), `token_without_user_id`, `user_not_found` (the frontend and backend use
+  different databases).
 - Admin writes and audit log reads are handled by Express, require a server-verified ADMIN
   role, validate referenced records, and write audit entries in the same DB transaction.
 - No production database, provider credentials, browser walkthrough, or deployment was
