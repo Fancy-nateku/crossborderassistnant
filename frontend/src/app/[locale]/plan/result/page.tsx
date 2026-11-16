@@ -8,8 +8,9 @@ import { HelpPanel } from "@/components/trust/help-panel";
 import { VerdictCard } from "@/components/trust/verdict-card";
 import { ExternalButton } from "@/components/ui/button";
 import { Container, PageShell } from "@/components/ui/container";
+import { BackLink } from "@/components/plan/back-link";
 import { ChevronLeftIcon, ShareIcon } from "@/components/ui/icons";
-import { Link, redirect } from "@/i18n/navigation";
+import { redirect } from "@/i18n/navigation";
 import { getBorder, getPlanPreview, getProduct } from "@/lib/data/backend";
 import { formatNumber } from "@/lib/format";
 import { hasValue, parsePlanInput, planToQuery } from "@/lib/plan/params";
@@ -88,13 +89,13 @@ export default async function ResultPage({ params, searchParams }: Props) {
     <PageShell>
       <header className="border-b border-line bg-panel">
         <Container className="flex items-center gap-2 px-3! py-2 md:px-5!">
-          <Link
+          <BackLink
             href={{ pathname: "/plan/value", query: planToQuery(input) }}
             aria-label={t("common.back")}
             className="flex size-11 items-center justify-center text-ink hover:text-brand-dark"
           >
             <ChevronLeftIcon />
-          </Link>
+          </BackLink>
           <p className="m-0 text-base font-bold">{t("result.headerTitle")}</p>
         </Container>
       </header>

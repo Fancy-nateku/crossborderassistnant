@@ -2,7 +2,8 @@ import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Container, PageShell } from "@/components/ui/container";
 import { ChevronLeftIcon } from "@/components/ui/icons";
-import { Link } from "@/i18n/navigation";
+import type { Link } from "@/i18n/navigation";
+import { BackLink } from "./back-link";
 import { RouteStripBar } from "./route-strip";
 import type { CountryCode } from "@/lib/domain";
 
@@ -35,13 +36,13 @@ export function WizardShell({
     <PageShell>
       <header className="border-b border-line bg-panel">
         <Container width="narrow" className="flex items-center gap-2 px-3! py-2 md:px-5!">
-          <Link
+          <BackLink
             href={backHref}
             aria-label={t("common.back")}
             className="flex size-11 items-center justify-center text-ink hover:text-brand-dark"
           >
             <ChevronLeftIcon />
-          </Link>
+          </BackLink>
           <p className="m-0 text-base font-bold">{t("wizard.stepOf", { step })}</p>
         </Container>
       </header>

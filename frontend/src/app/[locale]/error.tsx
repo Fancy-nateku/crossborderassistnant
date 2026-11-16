@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { BottomNav } from "@/components/site/bottom-nav";
+import { SiteHeader } from "@/components/site/site-header";
 import { Container, PageShell } from "@/components/ui/container";
 
 export default function LocaleError({
@@ -24,6 +26,7 @@ export default function LocaleError({
 
   return (
     <PageShell>
+      <SiteHeader />
       <main className="flex flex-1 items-center">
         <Container className="flex max-w-lg flex-col gap-4 py-10">
           <h1 className="m-0 text-[28px] leading-[1.15] font-bold">
@@ -37,6 +40,7 @@ export default function LocaleError({
           </div>
         </Container>
       </main>
+      <BottomNav />
     </PageShell>
   );
 }
