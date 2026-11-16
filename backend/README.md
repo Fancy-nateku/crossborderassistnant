@@ -41,7 +41,7 @@ manager; never prefix it with `NEXT_PUBLIC_`.
 
 Use an HTTPS backend URL in production (plain HTTP is permitted only for loopback
 addresses used by local builds/tests) and include the exact frontend origin
-`https://crossborderassistnant.vercel.app` in the backend allowlist. Production also
+`https://crossborderassistnant-theta.vercel.app` in the backend allowlist. Production also
 requires PostgreSQL migrations to be applied before startup. Do not expose database or
 service credentials to browser code.
 

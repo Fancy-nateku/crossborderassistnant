@@ -1,5 +1,5 @@
-import { fireEvent, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { act, fireEvent, screen, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { messages, metadataTitle, renderScreen } from "@/test/screen";
 import { saveDevicePlan } from "@/lib/plan/device-plans";
 import PlansPage, { generateMetadata } from "./page";
@@ -28,22 +28,41 @@ const secondInput = {
 
 const cards = () => screen.getAllByRole("link", { name: /to Uganda/ });
 
+/** Stubs /api/auth/session; the page waits for it before choosing which list to show. */
+function stubSession(user: { id: string } | null, planList: unknown[] = []) {
+  const fetchMock = vi.fn(async (url: string) =>
+    Response.json(url.startsWith("/api/auth/session") ? { user } : { data: planList }),
+  );
+  vi.stubGlobal("fetch", fetchMock);
+  return fetchMock;
+}
+
+async function renderPlans() {
+  await renderScreen(PlansPage);
+  await act(async () => {});
+}
+
 beforeEach(() => {
   window.localStorage.clear();
+  stubSession(null);
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
 });
 
 describe("saved plans screen", () => {
   it("titles the page and explains that plans stay on this device", async () => {
     expect(await metadataTitle(generateMetadata)).toBe(messages.plans.meta);
 
-    await renderScreen(PlansPage);
+    await renderPlans();
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(messages.plans.title);
     expect(screen.getByText(messages.plans.deviceNote)).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /sign in/i })).not.toBeInTheDocument();
   });
 
   it("shows an empty state without requiring an account", async () => {
-    await renderScreen(PlansPage);
+    await renderPlans();
 
     expect(screen.getByText(messages.plans.empty)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: messages.plans.emptyCta })).toHaveAttribute(
@@ -54,7 +73,7 @@ describe("saved plans screen", () => {
 
   it("shows a recoverable warning when saved browser data is malformed", async () => {
     window.localStorage.setItem("crossborderassist.device-plans.v1", "{");
-    await renderScreen(PlansPage);
+    await renderPlans();
 
     expect(screen.getByRole("alert")).toHaveTextContent(messages.plans.storageUnavailable);
   });
@@ -77,7 +96,7 @@ describe("saved plans screen", () => {
       requirementIds: [],
     });
 
-    await renderScreen(PlansPage);
+    await renderPlans();
 
     expect(cards()).toHaveLength(2);
     const beans = cards().find((card) => card.textContent?.includes("Beans, dry to Uganda"));
@@ -102,7 +121,7 @@ describe("saved plans screen", () => {
       requirementIds: ["origin"],
     });
     const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
-    await renderScreen(PlansPage);
+    await renderPlans();
 
     fireEvent.click(screen.getByRole("button", { name: messages.plans.delete }));
     expect(confirm).toHaveBeenCalledWith(messages.plans.deleteConfirm);
@@ -112,5 +131,39 @@ describe("saved plans screen", () => {
     fireEvent.click(screen.getByRole("button", { name: messages.plans.delete }));
     await waitFor(() => expect(screen.getByText(messages.plans.empty)).toBeInTheDocument());
     confirm.mockRestore();
+  });
+
+  it("shows only account plans when signed in, never this device's plans", async () => {
+    saveDevicePlan({
+      input: firstInput,
+      borderName: "Busia",
+      productName: "Beans, dry",
+      verdict: "likely_str_eligible",
+      totalCount: 1,
+      requirementIds: ["origin"],
+    });
+    stubSession({ id: "u1" }, [
+      {
+        id: "p1",
+        input: secondInput,
+        verdict: "cannot_confirm",
+        doneCount: 0,
+        totalCount: 0,
+        savedAt: "2026-11-10T07:00:00.000Z",
+      },
+    ]);
+    await renderPlans();
+
+    expect(await screen.findByText(/malaba/i)).toBeInTheDocument();
+    expect(screen.queryByText(messages.plans.deviceNote)).not.toBeInTheDocument();
+    expect(screen.queryByText(/busia/i)).not.toBeInTheDocument();
+  });
+
+  it("shows neither list until the session check finishes", async () => {
+    vi.stubGlobal("fetch", vi.fn(() => new Promise(() => {})));
+    await renderScreen(PlansPage);
+
+    expect(screen.queryByText(messages.plans.deviceNote)).not.toBeInTheDocument();
+    expect(screen.queryByText(messages.plans.empty)).not.toBeInTheDocument();
   });
 });

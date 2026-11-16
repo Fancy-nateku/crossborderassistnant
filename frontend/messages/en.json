@@ -282,7 +282,7 @@
     "items": [
       {
         "q": "Do I need an account?",
-        "a": "No. You can build and save plans without an account. Saved plans stay on this device and do not sync across devices."
+        "a": "No. You can build and save plans without an account, and they stay on this device only. If you create an account and sign in, your saved plans stay with your account and are separate from other people who use this device."
       },
       {
         "q": "Is this official clearance?",

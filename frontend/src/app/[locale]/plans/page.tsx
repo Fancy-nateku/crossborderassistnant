@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { AccountSavedPlans } from "@/components/plan/account-saved-plans";
-import { DeviceSavedPlans } from "@/components/plan/device-saved-plans";
+import { SavedPlansLists } from "@/components/plan/saved-plans-lists";
 import { Container, PageShell } from "@/components/ui/container";
 import { BottomNav } from "@/components/site/bottom-nav";
 import { SiteHeader } from "@/components/site/site-header";
@@ -30,8 +29,7 @@ export default async function PlansPage({ params }: Props) {
               {t("plans.title")}
             </h1>
           </div>
-          <AccountSavedPlans />
-          <DeviceSavedPlans />
+          <SavedPlansLists />
         </Container>
       </main>
       <BottomNav />

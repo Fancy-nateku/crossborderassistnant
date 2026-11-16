@@ -25,7 +25,7 @@ services:
           name: crossborder-db
           property: connectionString
       - key: ALLOWED_ORIGINS
-        value: https://crossborderassistnant.vercel.app
+        value: https://crossborderassistnant-theta.vercel.app
       - key: SOURCE_MAX_AGE_DAYS
         value: "30"
       - key: EXCHANGE_RATE_MAX_AGE_DAYS
